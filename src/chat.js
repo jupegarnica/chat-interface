@@ -4,21 +4,86 @@ import TextField from 'material-ui/TextField';
 import ChatMessages from './chatMessages';
 
 export default class Chat extends Component {
+    constructor() {
+        super()
+        this.state = {
+            messagesHistory: [
+                {
+                    type: 'text',
+                    content: 'hola',
+                    user: 'me'
+                }, {
+                    type: 'text',
+                    content: 'LoremLorem ipsum dolor sit amet, consectetur adipisicing elit, ',
+                    user: 'john doe'
+                }, {
+                    type: 'text',
+                    content: 'sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
+                    user: 'me'
+                }, {
+                    type: 'text',
+                    content: ':)',
+                    user: 'john'
+                }
+            ]
+        };
+    }
+    printNewMessage(msg) {
+        const newHistory = this.state.messagesHistory;
+        newHistory.push(msg);
+        this.setState({messagesHistory: newHistory})
+
+    }
     render() {
         return (
             <div className="chat-wrapper">
-                <ChatMessages/>
-                <ChatInput/>
+                <ChatMessages messagesHistory={this.state.messagesHistory}/>
+                <ChatInput handleInput={this.printNewMessage.bind(this)}/>
             </div>
         );
     }
 }
 
+const defaultText = {
+    text: 'type...'
+}
 class ChatInput extends Component {
+    constructor() {
+        super();
+        this.state = defaultText
+    }
+    onBlur(e) {
+        e.preventDefault();
+        const content = e.target.innerText;
+
+        const msg = {
+            type: 'text',
+            content,
+            user: 'me'
+        }
+        this.props.handleInput(msg);
+        e.target.innerText = defaultText.text;
+    }
+    onFocus(e) {
+        function selectElemText(elem) {
+            var range = document.createRange();
+            range.selectNodeContents(elem);
+            var selection = window.getSelection();
+            selection.removeAllRanges();
+            selection.addRange(range);
+        };
+        selectElemText(e.target);
+    }
     render() {
         return (
-            <div  className="chat-input">
-                <input placeholder="type or talk" ref={value => this.chatInput = value.val()}/>
+            <div className="chat-input ">
+                <div className="text-input-wraper bubble thinking">
+
+                    <div contentEditable onBlur={this.onBlur.bind(this)} onFocus={this.onFocus.bind(this)} className="text-input">
+                        {this.state.text}
+                    </div>
+                    {/* <textarea placeholder="type or talk" ref={value => this.chatInput = value.val()}/> */}
+                </div>
             </div>
         );
     }
