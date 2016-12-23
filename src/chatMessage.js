@@ -15,7 +15,7 @@ export default class ChatMessage extends Component {
             : 'you';
         return (
             <div className={'chat-message ' + user}>
-                <Typist delayGenerator={this.props.typingDone} cursor={cursor} avgTypingDelay={10} className="bubble">
+                <Typist delayGenerator={this.props.onUpdateText} onTypingDone={this.props.onTypingDone} cursor={cursor} avgTypingDelay={1} stdTypingDelay={500} className="bubble">
                     {this.props.content}
                 </Typist>
             </div>
