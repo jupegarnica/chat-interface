@@ -5,7 +5,12 @@ import ChatMessages from './chatMessages';
 
 export default class Chat extends Component {
     constructor() {
-        super()
+        super();
+        if (window.location.search.match(/bg=./)) {
+            let bg = window.location.search.split('bg=').join('').split('?').join('');
+            document.body.classList.add(bg)
+
+        }
         this.state = {
             messagesHistory: [
                 {
@@ -55,7 +60,6 @@ class ChatInput extends Component {
     onBlur(e) {
         e.preventDefault();
         const content = e.target.innerText;
-
         const msg = {
             type: 'text',
             content,
@@ -63,6 +67,8 @@ class ChatInput extends Component {
         }
         this.props.handleInput(msg);
         e.target.innerText = defaultText.text;
+        this.chatInputElement.classList.add('goTransparent');
+        setTimeout(() => this.chatInputElement.classList.remove('goTransparent'), 1000)
     }
     onFocus(e) {
         function selectElemText(elem) {
@@ -76,7 +82,7 @@ class ChatInput extends Component {
     }
     render() {
         return (
-            <div className="chat-input ">
+            <div className="chat-input " ref={(el) => this.chatInputElement = el}>
                 <div className="text-input-wraper bubble thinking">
 
                     <div contentEditable onBlur={this.onBlur.bind(this)} onFocus={this.onFocus.bind(this)} className="text-input">

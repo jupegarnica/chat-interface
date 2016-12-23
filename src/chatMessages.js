@@ -8,17 +8,17 @@ export default class ChatMessages extends Component {
             messagesHistory: props.messagesHistory
         }
     }
-    // componentDidUpdate(){
-    //     this.runAutoScrollDown();
-    //     setInterval(this.runAutoScrollDown, 100);
-    // }
+    componentDidUpdate(){
+        this.runAutoScrollDown();
+    }
     runAutoScrollDown(){
         const element = this.autoScrollDown;
         element.scrollTop = element.scrollHeight;
     }
     onUpdateText(){
         if (!intervalID) {
-            intervalID = setInterval(this.runAutoScrollDown.bind(this), 400);
+            this.runAutoScrollDown();
+            intervalID = setInterval(this.runAutoScrollDown.bind(this), 100);
         }
 
     }
