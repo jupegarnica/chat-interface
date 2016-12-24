@@ -50,8 +50,6 @@ export default class Chat extends Component {
 
 
 import ContentSend from 'material-ui/svg-icons/content/send';
-import HardwareVideogameAsset from 'material-ui/svg-icons/hardware/videogame-asset';
-import {red500, yellow500, blue500} from 'material-ui/styles/colors';
 const defaultState = {
     text: 'type...',
     showSendIcon: false

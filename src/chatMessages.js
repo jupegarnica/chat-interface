@@ -28,7 +28,7 @@ export default class ChatMessages extends Component {
         intervalID = null;
     }
     render() {
-        const history = this.state.messagesHistory.map((el) => <ChatMessage onTypingDone={this.onTypingDone.bind(this)} onUpdateText={this.onUpdateText.bind(this)} content={el.content} me={el.user === 'me'}/>);
+        const history = this.state.messagesHistory.map((el, i) => <ChatMessage key={i} onTypingDone={this.onTypingDone.bind(this)} onUpdateText={this.onUpdateText.bind(this)} content={el.content} me={el.user === 'me'}/>);
         return (
             <div className="chat-messages" ref={(input) => { this.autoScrollDown = input }}>
                 <div className="chat-messages-wraper">
