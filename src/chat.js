@@ -59,11 +59,12 @@ const defaultState = {
 class ChatInput extends Component {
     constructor() {
         super();
-        this.state = defaultState
+        this.state = defaultState;
     }
     sendMessage(e) {
         e.preventDefault();
         this.textInputElement.blur();
+        document.body.focus();
         const content = this.textInputElement.innerText;
         const msg = {
             type: 'text',
@@ -88,7 +89,7 @@ class ChatInput extends Component {
         };
         selectElemText(e.target);
     }
-    onKeyUp(e){
+    onKeyDown(e){
         if (e.key === 'Enter') {
             this.sendMessage(e);
         }
@@ -100,9 +101,9 @@ class ChatInput extends Component {
     }
     render() {
         return (
-            <div className="chat-input " ref={(el) => this.chatInputElement = el}>
+            <div className="chat-input " ref={(el) => this.chatInputElement = el} onKeyDown={this.onKeyDown.bind(this)}>
                 <div className="text-input-wraper bubble thinking">
-                    <div ref={(el) => this.textInputElement = el} suppressContentEditableWarning contentEditable onKeyUp={this.onKeyUp.bind(this)} onFocus={this.onFocus.bind(this)} className="text-input">
+                    <div ref={(el) => this.textInputElement = el} suppressContentEditableWarning contentEditable  onFocus={this.onFocus.bind(this)} className="text-input">
                         {this.state.text}
                     </div>
 

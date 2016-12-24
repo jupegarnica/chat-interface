@@ -14,7 +14,8 @@
 }
 
 .yellow #chat-root {
-  background: linear-gradient(120deg, #c39500, #fcc000, hsl(46, 98%, 55%));
+  /*background: linear-gradient(120deg, #c39500, #fcc000, hsl(46, 98%, 55%));*/
+  background: linear-gradient(120deg, #ff8d00, #fcc000, hsl(46, 98%, 55%));
   /*background: linear-gradient(to right bottom, rgb(47, 43, 173), rgb(47, 43, 173), rgb(65, 58, 228), rgb(102, 98, 255));*/
   /*background: linear-gradient(120deg, #c39500, #fcc000, hsla(46, 100%, 81%, 1));*/
   /*background:  linear-gradient(to right bottom,#2f2bad,#2f2bad,#5955bd,#8280ce);*/
@@ -31,7 +32,6 @@
 
 #chat-root * {
   color: white;
-  overflow-wrap: break-word;
 }
 
 .chat-wrapper {
@@ -93,6 +93,9 @@
   background: rgba(0, 0, 0, 0.3);
   max-width: 100%;
   margin: 0.5em;
+  white-space: pre-wrap;
+  /*overflow-wrap: break-word;*/
+
 }
 
 
@@ -218,18 +221,23 @@
   max-width: 93%;
 }
 
-.text-input {
+.text-input , .text-input * {
   color: rgba(255, 255, 255, 0.2) !important;
   outline: 0px !important;
   overflow: scroll;
 }
 
-.text-input:focus {
+.text-input:focus, .text-input:focus * {
   color: white !important;
   outline: 0px !important;
 }
 
-.text-input::selection, .text-input::-moz-selection {
+.text-input::selection, .text-input *::selection {
+  color: white !important;
+  background-color: black;
+  padding: 2em;
+}
+.text-input::-moz-selection, .text-input *::-moz-selection {
   color: white !important;
   background-color: black;
   padding: 2em;

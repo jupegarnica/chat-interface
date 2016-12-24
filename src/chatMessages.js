@@ -6,7 +6,8 @@ export default class ChatMessages extends Component {
         super();
         this.state = {
             messagesHistory: props.messagesHistory
-        }
+        };
+        window.addEventListener("resize", this.runAutoScrollDown.bind(this));
     }
     componentDidUpdate(){
         this.runAutoScrollDown();
