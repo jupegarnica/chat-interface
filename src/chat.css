@@ -200,6 +200,7 @@
 .chat-input {
   display: flex;
   justify-content: center;
+  align-items: center;
   flex-shrink: 0;
   opacity: 1;
   transition: opacity 2s;
@@ -214,7 +215,7 @@
   display: flex;
   justify-content: center;
   margin-bottom: 1em;
-  max-width: 100%;
+  max-width: 93%;
 }
 
 .text-input {
@@ -232,4 +233,8 @@
   color: white !important;
   background-color: black;
   padding: 2em;
+}
+.sendIcon {
+    position: relative;
+    top: -0.1em;
 }
