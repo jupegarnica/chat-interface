@@ -35,8 +35,7 @@ export default class Chat extends Component {
     printNewMessage(msg) {
         const newHistory = this.state.messagesHistory;
         newHistory.push(msg);
-        this.setState({messagesHistory: newHistory})
-
+        this.setState({messagesHistory: newHistory});
     }
     render() {
         return (
