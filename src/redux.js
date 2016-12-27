@@ -1,0 +1,176 @@
+import {createStore, applyMiddleware} from 'redux';
+import Logger from 'redux-logger';
+
+const initialmessagesHistory = [
+    {
+        type: 'text',
+        content: 'hola',
+        user: 'me'
+    }, {
+        type: 'text',
+        content: 'LoremLorem ipsum dolor sit amet, consectetur adipisicing elit, ',
+        user: 'john doe'
+    }, {
+        type: 'text',
+        content: 'sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
+        user: 'me'
+    }, {
+        type: 'text',
+        content: ':)',
+        user: 'john'
+    }
+];
+export const initialState = {
+    messagesHistory: initialmessagesHistory,
+    theme: 'black',
+    typing: {
+        me: false
+    },
+    chatInputText: 'type...',
+    isAutoScrolling: false
+}
+
+// Reducer:  Pure function and inmutable state aproach
+export function chatReducer(state = initialState, action) {
+    switch (action.type) {
+        case 'SEND_MESSAGE':
+            return {
+                ...state,
+                messagesHistory: [
+                    ...state.messagesHistory,
+                    action.payload
+                ]
+            }
+        case 'CHANGE_THEME':
+
+            return {
+                ...state,
+                theme: action.payload
+            }
+        case 'START_TYPING_ME':
+            return {
+                ...state,
+                typing: {
+                    me: true
+                }
+            }
+        case 'STOP_TYPING_ME':
+            return {
+                ...state,
+                typing: {
+                    me: false
+                }
+            }
+        case 'START_AUTOSCROLL':
+            return {
+                ...state,
+                isAutoScrolling: true
+            }
+        case 'STOP_AUTOSCROLL':
+            return {
+                ...state,
+                isAutoScrolling: false
+            }
+        default:
+            return state
+    }
+}
+
+// Store
+const loggerOptions = {
+    level: 'log', //: 'log' | 'console' | 'warn' | 'error' | 'info', // console's level
+    // duration = false, //: Boolean, // Print the duration of each action?
+    // timestamp = true, //: Boolean, // Print the timestamp with each action?
+    //colors: ColorsObject, // Object with color getters. See the ColorsObject interface.
+    //logger = console: LoggerObject, // Implementation of the `console` API.
+    //logErrors = true: Boolean, // Should the logger catch, log, and re-throw errors?
+    collapsed: true, // Takes a boolean or optionally a function that receives `getState` function for accessing current store state and `action` object as parameters. Returns `true` if the log group should be collapsed, `false` otherwise.
+    // predicate, // If specified this function will be called before each action is processed with this middleware.
+    // stateTransformer, // Transform state before print. Eg. convert Immutable object to plain JSON.
+    // actionTransformer, // Transform state before print. Eg. convert Immutable object to plain JSON.
+    // errorTransformer, // Transform state before print. Eg. convert Immutable object to plain JSON.
+    // titleFormatter, // Format the title used when logging actions.
+    // diff = false: Boolean, // Show diff between states.
+    // diffPredicate // Filter function for showing states diff.'
+}
+export const store = createStore(chatReducer, initialState, applyMiddleware(Logger(loggerOptions)))
+
+
+// Actions
+export const changeThemeAction = (theme) => {
+    document.body.classList.add(theme);
+    return {type: 'CHANGE_THEME', payload: theme};
+}
+
+export const startTypingMeAction = (domNode) => {
+    function selectElemText(elem) {
+        var range = document.createRange();
+        range.selectNodeContents(elem);
+        var selection = window.getSelection();
+        selection.removeAllRanges();
+        selection.addRange(range);
+    };
+    selectElemText(domNode);
+    return {type: 'START_TYPING_ME'};
+}
+
+export const stopTypingMeAction = () => {
+    (function clearSelection() {
+        if (document.selection) {
+            document.selection.empty();
+        } else if (window.getSelection) {
+            window.getSelection().removeAllRanges();
+        }
+    })();
+    document.body.click();
+    return {type: 'STOP_TYPING_ME'};
+}
+
+export const sendMessageAction = (domNode, defaultText, elementToHide) => {
+    domNode.blur();
+    const msg = {
+        type: 'text',
+        content: domNode.innerText,
+        user: 'me'
+    }
+    elementToHide.classList.add('goTransparent');
+    setTimeout(() => elementToHide.classList.remove('goTransparent'), 1000)
+    domNode.innerText = defaultText;
+    store.dispatch(stopTypingMeAction())
+    return {type: 'SEND_MESSAGE', payload: msg};
+}
+
+const runAutoScrollDown = (domNode) => () => {
+    domNode.scrollTop = domNode.scrollHeight;
+}
+let intervalID = null;
+// start Writing new Message to screen.
+export const startAutoScrollAction = (messagesDomNode) => {
+    if (!intervalID) {
+        runAutoScrollDown(messagesDomNode)();
+        intervalID = setInterval(runAutoScrollDown(messagesDomNode), 200);
+    }
+    return {type: 'START_AUTOSCROLL'};
+}
+export const stopAutoScrollAction = () => {
+    clearInterval(intervalID);
+    intervalID = null;
+    return {type: 'STOP_AUTOSCROLL'};
+}
+
+// Map Redux state to component props
+export const stateToProps = (state) => {
+    return {state}
+}
+
+// Map Redux actions to component props
+// export const dispatchToProps = (dispatch) => (action) => {
+//     return {
+//         dispatch: (data) => dispatch(action(data))
+//     }
+// }
+export const dispatchToProps = (dispatch) => {
+    return {
+        dispatch
+    }
+}
