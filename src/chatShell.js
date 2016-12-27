@@ -1,67 +1,80 @@
-import React, {Component, PropTypes} from 'react'
-import ReactDOM from 'react-dom'
-import {createStore} from 'redux'
-import {Provider, connect} from 'react-redux'
-import Chat from './chat.js'
+import React, {Component} from 'react'
+import {createStore, applyMiddleware} from 'redux'
+import {Provider} from 'react-redux'
+import Logger from 'redux-logger'
+import {Chat} from './chat.js'
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'; //material-ui dependency
 
-// React component
-class ChatShellComp extends Component {
-    render() {
-        const {value, onIncreaseClick} = this.props
-        return (
-            <MuiThemeProvider>
-                <Chat/>
-            </MuiThemeProvider>
-        )
+const initialmessagesHistory = [
+    {
+        type: 'text',
+        content: 'hola',
+        user: 'me'
+    }, {
+        type: 'text',
+        content: 'LoremLorem ipsum dolor sit amet, consectetur adipisicing elit, ',
+        user: 'john doe'
+    }, {
+        type: 'text',
+        content: 'sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
+        user: 'me'
+    }, {
+        type: 'text',
+        content: ':)',
+        user: 'john'
     }
+];
+const initialState = {
+    messagesHistory: initialmessagesHistory,
+    theme: 'black'
 }
-//
-// ChatShellComp.propTypes = {
-//     value: PropTypes.number.isRequired,
-//     onIncreaseClick: PropTypes.func.isRequired
-// }
-//
-// Action
-const sendMessage = (msg) => {
-    return {
-        type: 'sendMessage',
-        payload: msg
-    };
-}
-//
 
-// Reducer
-function chatReducer(state = {
-    messagesHistory: [],
-    uiState: {},
-}, action) {
-    const count = state.count
+// Reducer:  Pure function and inmutable state aproach
+function chatReducer(state = initialState, action) {
     switch (action.type) {
         case 'sendMessage':
             return {
-                count: count + 1
+                ...state,
+                messagesHistory: [
+                    ...state.messagesHistory,
+                    action.payload
+                ]
+            }
+        case 'changeTheme':
+            document.body.classList.add(action.payload);
+            return {
+                ...state,
+                theme: action.payload
             }
         default:
             return state
     }
 }
-//
-// Store
-const store = createStore(chatReducer)
 
-// Map Redux state to component props
-function mapStateToProps(state) {
-    return {messagesHistory: state.messagesHistory}
+// Store
+const store = createStore(chatReducer, initialState, applyMiddleware(Logger()))
+
+//changeTheme trigger
+
+//action
+const changeTheme = (theme) => {
+    return {type: 'changeTheme', payload: theme};
 }
 
-// Map Redux actions to component props
-function mapDispatchToProps(dispatch) {
-    return {
-        sendMessage: (msg) => dispatch(sendMessage(msg))
+let theme = window.location.search.match(/bg=[^&]*/)[0].split('bg=').join('').split('&').join('');
+store.dispatch(changeTheme(theme))
+
+// React component
+class ChatShellComp extends Component {
+    render() {
+        return (
+            <Provider store={store}>
+                <MuiThemeProvider>
+                    <Chat/>
+                </MuiThemeProvider>
+            </Provider>
+        )
     }
 }
 
-// Connected Component
-const ChatShell = connect(mapStateToProps, mapDispatchToProps)(ChatShellComp)
 export default ChatShellComp;
