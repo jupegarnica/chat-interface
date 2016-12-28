@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {Component} from 'react';
 import './chat.css';
 import ChatMessages from './chatMessages';
 import ChatInput from './chatInput';
