@@ -40,6 +40,7 @@ class ChatMessagesComp extends Component {
             }}>
                 <div className="chat-messages-wraper">
                     {history}
+                    {history}
                 </div>
             </div>
         );
