@@ -27,7 +27,8 @@ export const initialState = {
         me: false
     },
     chatInputText: 'type...',
-    isAutoScrolling: false
+    isAutoScrolling: false,
+    isScrollAtBottom: true
 }
 
 // Reducer:  Pure function and inmutable state aproach
@@ -42,7 +43,6 @@ export function chatReducer(state = initialState, action) {
                 ]
             }
         case 'CHANGE_THEME':
-
             return {
                 ...state,
                 theme: action.payload
@@ -71,6 +71,16 @@ export function chatReducer(state = initialState, action) {
                 ...state,
                 isAutoScrolling: false
             }
+        case 'CHANGE_LAYOUT':
+            return {
+                ...state,
+                layout: action.payload
+            }
+        case 'SET_SCROLL':
+            return {
+                ...state,
+                isScrollAtBottom: action.payload
+            }
         default:
             return state
     }
@@ -94,7 +104,6 @@ const loggerOptions = {
     // diffPredicate // Filter function for showing states diff.'
 }
 export const store = createStore(chatReducer, initialState, applyMiddleware(Logger(loggerOptions)))
-
 
 // Actions
 export const changeThemeAction = (theme) => {
@@ -157,6 +166,19 @@ export const stopAutoScrollAction = () => {
     intervalID = null;
     return {type: 'STOP_AUTOSCROLL'};
 }
+export const windowResizeAction = (width, heigth) => {
+    const layout = width / heigth > 2 ? 'landscape' : 'portrait'
+    return {
+        type: 'CHANGE_LAYOUT',
+        payload: layout
+    };
+}
+export const isScrollAtBottom = (domNode) => {
+    return {
+        type: 'SET_SCROLL',
+        payload: !(domNode.offsetHeight + domNode.scrollTop < domNode.scrollHeight - 20)
+    };
+}
 
 // Map Redux state to component props
 export const stateToProps = (state) => {
@@ -170,7 +192,5 @@ export const stateToProps = (state) => {
 //     }
 // }
 export const dispatchToProps = (dispatch) => {
-    return {
-        dispatch
-    }
+    return {dispatch}
 }

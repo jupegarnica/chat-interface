@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import ChatMessage from './chatMessage';
 import {connect} from 'react-redux';
-import {stateToProps, dispatchToProps, startAutoScrollAction, stopAutoScrollAction} from './redux';
+import {stateToProps, dispatchToProps, startAutoScrollAction, stopAutoScrollAction, isScrollAtBottom} from './redux';
 
 class ChatMessagesComp extends Component {
     constructor(props) {
@@ -11,7 +11,7 @@ class ChatMessagesComp extends Component {
                 this.props.dispatch(startAutoScrollAction(this.chatMessagesElement));
                 setTimeout(() => {
                     this.props.dispatch(stopAutoScrollAction());
-                },1000)
+                },500)
             }
         });
     }
@@ -25,11 +25,17 @@ class ChatMessagesComp extends Component {
             this.props.dispatch(stopAutoScrollAction());
         }
     }
+    handleScroll() {
+        const action = isScrollAtBottom(this.chatMessagesElement)
+        if (action.payload !== this.props.state.isScrollAtBottom) {
+            this.props.dispatch(action);
+        }
+    }
     render() {
         const lastMessange = this.props.state.messagesHistory.length - 1;
         const history = this.props.state.messagesHistory.map((el, i) => <ChatMessage animate={i === lastMessange} key={i} onTypingDone={this.onTypingDone.bind(this)} onUpdateText={this.onUpdateText.bind(this)} content={el.content} me={el.user === 'me'}/>);
         return (
-            <div className="chat-messages" ref={(input) => {
+            <div onScroll={this.handleScroll.bind(this)} className="chat-messages" ref={(input) => {
                 this.chatMessagesElement = input
             }}>
                 <div className="chat-messages-wraper">

@@ -30,7 +30,7 @@ class ChatInputComp extends Component {
     }
     render() {
         return (
-            <div className="chat-input " ref={(el) => this.chatInputElement = el} >
+            <div className={'chat-input '+( this.props.state.isScrollAtBottom ? '':'showShadow') } ref={(el) => this.chatInputElement = el} >
                 <div onClick={this.onFocus.bind(this)} className="text-input-wraper bubble thinking">
                     <div ref={(el) => this.textInputElement = el} suppressContentEditableWarning contentEditable onBlur={this.onBlur.bind(this)} onKeyDown={this.onKeyDown.bind(this)} className="text-input">
                         {this.props.state.chatInputText}

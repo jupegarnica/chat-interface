@@ -11,7 +11,6 @@ let search = window.location.search.match(/bg=[^&]*/);
 let theme = search && search.length ? search[0].split('bg=').join('').split('&').join('') : '';
 theme && store.dispatch(changeThemeAction(theme));
 
-
 // React component
 class ChatShellComp extends Component {
     render() {

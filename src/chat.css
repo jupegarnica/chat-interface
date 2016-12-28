@@ -47,6 +47,13 @@
   flex-direction: column;
   justify-content: flex-end;
 }
+.chat-wrapper.landscape {
+  max-width: 100%;
+  flex-direction: row;
+}
+.chat-wrapper.landscape .chat-input {
+  width: 12em;
+}
 
 .paperTransparent {
   background: transparent;
@@ -205,8 +212,11 @@
   flex-shrink: 0;
   opacity: 1;
   transition: opacity 2s;
-  /*box-shadow: rgba(0,0,0,0.1) 0 -0.2em 0.1em 0em*/
 
+
+}
+.chat-input.showShadow {
+    box-shadow: rgba(0,0,0,0.1) 0 -0.2em 0.1em 0em;
 }
 
 .chat-input.goTransparent {
