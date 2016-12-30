@@ -153,7 +153,7 @@ const runAutoScrollDown = (domNode) => () => {
     domNode.scrollTop = domNode.scrollHeight;
 }
 let intervalID = null;
-// start Writing new Message to screen.
+// Writing new Message to screen.
 export const startAutoScrollAction = (messagesDomNode) => {
     if (!intervalID) {
         runAutoScrollDown(messagesDomNode)();

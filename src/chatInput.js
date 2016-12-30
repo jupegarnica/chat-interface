@@ -5,7 +5,7 @@ import ContentSend from 'material-ui/svg-icons/content/send';
 
 class ChatInputComp extends Component {
     sendMessageAction(e) {
-        e.preventDefault();
+        // e.preventDefault();
         this.props.dispatch(sendMessageAction(this.textInputElement, this.props.state.chatInputText, this.chatInputElement));
     }
     onFocus() {
@@ -18,7 +18,7 @@ class ChatInputComp extends Component {
             if (this.props.state.typing.me) {
                 this.props.dispatch(stopTypingMeAction())
             }
-        }, 0);
+        }, 100);
     }
     onKeyDown(e) {
         if (!this.props.state.typing.me) {
