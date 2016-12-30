@@ -2,23 +2,23 @@ import {createStore, applyMiddleware} from 'redux';
 import Logger from 'redux-logger';
 
 const initialmessagesHistory = [
-    {
-        type: 'text',
-        content: 'hola',
-        user: 'me'
-    }, {
-        type: 'text',
-        content: 'LoremLorem ipsum dolor sit amet, consectetur adipisicing elit, ',
-        user: 'john doe'
-    }, {
-        type: 'text',
-        content: 'sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
-        user: 'me'
-    }, {
-        type: 'text',
-        content: ':)',
-        user: 'john'
-    }
+    // {
+    //     type: 'text',
+    //     content: 'hola',
+    //     user: 'me'
+    // }, {
+    //     type: 'text',
+    //     content: 'LoremLorem ipsum dolor sit amet, consectetur adipisicing elit, ',
+    //     user: 'john doe'
+    // }, {
+    //     type: 'text',
+    //     content: 'sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
+    //     user: 'me'
+    // }, {
+    //     type: 'text',
+    //     content: ':)',
+    //     user: 'john'
+    // }
 ];
 export const initialState = {
     messagesHistory: initialmessagesHistory,
@@ -100,12 +100,13 @@ const loggerOptions = {
     // actionTransformer, // Transform state before print. Eg. convert Immutable object to plain JSON.
     // errorTransformer, // Transform state before print. Eg. convert Immutable object to plain JSON.
     // titleFormatter, // Format the title used when logging actions.
+    diff: true,
     // diff = false: Boolean, // Show diff between states.
     // diffPredicate // Filter function for showing states diff.'
 }
 export const store = createStore(chatReducer, initialState, applyMiddleware(Logger(loggerOptions)))
 
-// Actions
+// Actions (logic)
 export const changeThemeAction = (theme) => {
     document.body.classList.add(theme);
     return {type: 'CHANGE_THEME', payload: theme};
@@ -135,19 +136,27 @@ export const stopTypingMeAction = () => {
     return {type: 'STOP_TYPING_ME'};
 }
 
-export const sendMessageAction = (domNode, defaultText, elementToHide) => {
-    domNode.blur();
+
+export const sendMessageAction = (type, content, user) => {
+    let timestamp =  + new Date();
     const msg = {
-        type: 'text',
-        content: domNode.innerText,
-        user: 'me'
+        type,
+        content,
+        user,
+        timestamp,
     }
+    return {type: 'SEND_MESSAGE', payload: msg};
+}
+export const sendMessageFromChatInputAction = (domNode, defaultText, elementToHide) => {
+    domNode.blur();
+    const content = domNode.innerText;
     elementToHide.classList.add('goTransparent');
     setTimeout(() => elementToHide.classList.remove('goTransparent'), 1000)
     domNode.innerText = defaultText;
-    store.dispatch(stopTypingMeAction())
-    return {type: 'SEND_MESSAGE', payload: msg};
+    store.dispatch(stopTypingMeAction());
+    return sendMessageAction('text', content, 'me');
 }
+
 
 const runAutoScrollDown = (domNode) => () => {
     domNode.scrollTop = domNode.scrollHeight;
@@ -167,11 +176,10 @@ export const stopAutoScrollAction = () => {
     return {type: 'STOP_AUTOSCROLL'};
 }
 export const windowResizeAction = (width, heigth) => {
-    const layout = width / heigth > 2 ? 'landscape' : 'portrait'
-    return {
-        type: 'CHANGE_LAYOUT',
-        payload: layout
-    };
+    const layout = width / heigth > 2
+        ? 'landscape'
+        : 'portrait'
+    return {type: 'CHANGE_LAYOUT', payload: layout};
 }
 export const isScrollAtBottom = (domNode) => {
     return {

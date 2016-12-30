@@ -1,12 +1,12 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
-import {stateToProps, dispatchProps, sendMessageAction, startTypingMeAction, stopTypingMeAction} from './redux';
+import {stateToProps, dispatchProps, sendMessageFromChatInputAction, startTypingMeAction, stopTypingMeAction} from './redux';
 import ContentSend from 'material-ui/svg-icons/content/send';
 
 class ChatInputComp extends Component {
-    sendMessageAction(e) {
+    sendMessageFromChatInputAction(e) {
         // e.preventDefault();
-        this.props.dispatch(sendMessageAction(this.textInputElement, this.props.state.chatInputText, this.chatInputElement));
+        this.props.dispatch(sendMessageFromChatInputAction(this.textInputElement, this.props.state.chatInputText, this.chatInputElement));
     }
     onFocus() {
         if (!this.props.state.typing.me) {
@@ -25,7 +25,7 @@ class ChatInputComp extends Component {
             this.props.dispatch(startTypingMeAction(this.textInputElement));
         }
         if (e.key === 'Enter') {
-            this.props.dispatch(sendMessageAction(this.textInputElement, this.props.state.chatInputText, this.chatInputElement));
+            this.props.dispatch(sendMessageFromChatInputAction(this.textInputElement, this.props.state.chatInputText, this.chatInputElement));
         }
     }
     render() {
@@ -38,7 +38,7 @@ class ChatInputComp extends Component {
 
                 </div>
                 <div hidden={!this.props.state.typing.me} className="sendIcon">
-                    <ContentSend onClick={this.sendMessageAction.bind(this)}/>
+                    <ContentSend onClick={this.sendMessageFromChatInputAction.bind(this)}/>
                 </div>
             </div>
         );
