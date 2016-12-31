@@ -18,6 +18,10 @@
   /*background: linear-gradient(to right bottom, #111, #222, #333, #444);*/
 }
 
+.image #chat-root {
+  background: url('https://images.unsplash.com/photo-1483086431886-3590a88317fe?dpr=1&auto=format&fit=crop&w=767&h=1149&q=80&cs=tinysrgb&crop=');
+}
+
 .yellow #chat-root {
   background: linear-gradient(120deg, #ff8d00, #fcc000, hsl(46, 98%, 55%));
   font-family: monospace;
@@ -47,10 +51,12 @@
   flex-direction: column;
   justify-content: flex-end;
 }
+
 .chat-wrapper.landscape {
   max-width: 100%;
   flex-direction: row;
 }
+
 .chat-wrapper.landscape .chat-input {
   width: 12em;
 }
@@ -213,11 +219,10 @@
   opacity: 1;
   transition: opacity 2s;
   /*box-shadow: rgba(0,0,0,0.1) 0 -0.2em 0.1em 0em*/
-
-
 }
+
 .chat-input.showShadow {
-    box-shadow: rgba(0,0,0,0.1) 0 -0.2em 0.1em 0em;
+  box-shadow: rgba(0, 0, 0, 0.1) 0 -0.2em 0.1em 0em;
 }
 
 .chat-input.goTransparent {
