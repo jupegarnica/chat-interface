@@ -9,7 +9,7 @@
   font-size: 14px;
   line-height: 1.4;
   font-weight: 300;
-  font-size: calc(12px + 1vmin);
+  font-size: calc(12px + 1.5vmin);
   background: linear-gradient(to right bottom, #111, #222, #333, #444);
   /*background: linear-gradient(120deg, #c39500, #fcc000, hsl(46, 98%, 55%));*/
   /*background: linear-gradient(to right bottom, rgb(47, 43, 173), rgb(47, 43, 173), rgb(65, 58, 228), rgb(102, 98, 255));*/

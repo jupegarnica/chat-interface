@@ -1,5 +1,6 @@
-import {createStore, applyMiddleware} from 'redux';
+import {createStore, applyMiddleware, combineReducers} from 'redux';
 import Logger from 'redux-logger';
+import {botState,botReducer, OrchestratorDispacherMiddleWare} from './bot';
 
 const initialmessagesHistory = [
     // {
@@ -20,7 +21,7 @@ const initialmessagesHistory = [
     //     user: 'john'
     // }
 ];
-export const initialState = {
+export const chatState = {
     messagesHistory: initialmessagesHistory,
     theme: 'black',
     typing: {
@@ -28,13 +29,13 @@ export const initialState = {
     },
     chatInputText: 'type...',
     isAutoScrolling: false,
-    isScrollAtBottom: true
+    isScrollAtBottom: true,
 }
 
 // Reducer:  Pure function and inmutable state aproach
-export function chatReducer(state = initialState, action) {
+export function chatReducer(state = chatState, action) {
     switch (action.type) {
-        case 'SEND_MESSAGE':
+        case 'PRINT_MESSAGE':
             return {
                 ...state,
                 messagesHistory: [
@@ -104,7 +105,8 @@ const loggerOptions = {
     // diff = false: Boolean, // Show diff between states.
     // diffPredicate // Filter function for showing states diff.'
 }
-export const store = createStore(chatReducer, initialState, applyMiddleware(Logger(loggerOptions)))
+const reducers = combineReducers({botState:botReducer, chatState: chatReducer})
+export const store = createStore(reducers, {chatState,botState}, applyMiddleware(Logger(loggerOptions), OrchestratorDispacherMiddleWare))
 
 // Actions (logic)
 export const changeThemeAction = (theme) => {
@@ -136,8 +138,7 @@ export const stopTypingMeAction = () => {
     return {type: 'STOP_TYPING_ME'};
 }
 
-
-export const sendMessageAction = (type, content, user) => {
+export const sendMessageAction = ({type, content, user}) => {
     let timestamp =  + new Date();
     const msg = {
         type,
@@ -145,7 +146,7 @@ export const sendMessageAction = (type, content, user) => {
         user,
         timestamp,
     }
-    return {type: 'SEND_MESSAGE', payload: msg};
+    return {type: 'PRINT_MESSAGE', payload: msg};
 }
 export const sendMessageFromChatInputAction = (domNode, defaultText, elementToHide) => {
     domNode.blur();
@@ -154,7 +155,7 @@ export const sendMessageFromChatInputAction = (domNode, defaultText, elementToHi
     setTimeout(() => elementToHide.classList.remove('goTransparent'), 1000)
     domNode.innerText = defaultText;
     store.dispatch(stopTypingMeAction());
-    return sendMessageAction('text', content, 'me');
+    return sendMessageAction({type:'text', content, user:'me'});
 }
 
 
@@ -190,7 +191,7 @@ export const isScrollAtBottom = (domNode) => {
 
 // Map Redux state to component props
 export const stateToProps = (state) => {
-    return {state}
+    return {state: state.chatState}
 }
 
 // Map Redux actions to component props
