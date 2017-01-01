@@ -11,17 +11,17 @@ const bot = new Bot({
     questions: [
         {
             type: 'text',
-            content: 'Hola, como te llamas?',
+            content: ' como te llamas?',
             validatePattern: /^[A-Z]/,
             invalidReply: '¿Sin mayuscula?, escríbelo bien please',
             nameToSave: 'name'
         },
         {
             type: 'text',
-            content: 'email?',
+            content: 'Hola ${name}, cual es tu email?',
             validatePattern: /.*@.*\./,
-            invalidReply: 'no parece un email',
-            nameToSave: 'name'
+            invalidReply: 'no parece un email ${name}',
+            nameToSave: 'email'
         }
     ]
 })

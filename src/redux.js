@@ -149,7 +149,7 @@ export const sendMessageAction = ({type, content, user}) => {
     return {type: 'PRINT_MESSAGE', payload: msg};
 }
 export const sendMessageFromChatInputAction = (domNode, defaultText, elementToHide) => {
-    domNode.blur();
+    // domNode.blur();
     const content = domNode.innerText;
     elementToHide.classList.add('goTransparent');
     setTimeout(() => elementToHide.classList.remove('goTransparent'), 1000)

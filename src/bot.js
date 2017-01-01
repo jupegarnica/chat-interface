@@ -1,7 +1,7 @@
 import {store, sendMessageAction} from './redux';
 export const botState = {
     questions: [],
-    answers: [],
+    answers: {},
     index: 0,
     currentQuestion: {},
     currentAnswer: {
@@ -49,19 +49,19 @@ export const botReducer = (state = botState, action) => {
             };
             break;
         case 'NEW_VALID_ANSWER':
+            const nameToSave = payload.currentQuestion.nameToSave || index;
             return {
                 ...state,
-                answers: [
+                answers: {
                     ...answers,
-                    payload
-                ]
+                    [nameToSave]: payload.currentAnswer.content,
+                }
             }
             case 'BOT_OFF':
                 return {
                     ...state,
                     mode: 'OFF'
                 }
-
             break;
         default:
             return {
@@ -74,9 +74,9 @@ export const OrchestratorDispacherMiddleWare = ({getState}) => (next) => (action
     let returnValue = next(action)
     //after dispatch
     const {botState} = getState();
-    let {currentQuestion, isNewAnswer, currentAnswer, mode} = botState;
+    let {currentQuestion, isNewAnswer, currentAnswer, mode, answers} = botState;
 
-    if (mode === 'OFF') return returnValue;
+    if (mode === 'OFF') return console.log(answers);
 
     switch (action.type) {
         case 'INIT_BOT':
@@ -88,7 +88,7 @@ export const OrchestratorDispacherMiddleWare = ({getState}) => (next) => (action
         case 'PRINT_MESSAGE':
             if (isNewAnswer) {
                 if (isValid(currentAnswer, currentQuestion)) {
-                    store.dispatch({type: 'NEW_VALID_ANSWER', payload: currentAnswer});
+                    store.dispatch({type: 'NEW_VALID_ANSWER', payload: {currentAnswer, currentQuestion}});
                 } else {
                     store.dispatch({type: 'INVALID_ANSWER', payload: currentAnswer});
                 }
@@ -118,11 +118,25 @@ export const OrchestratorDispacherMiddleWare = ({getState}) => (next) => (action
     return returnValue
 }
 const talk = (msg) => {
+
     const msgObj = {
         ...msg,
+        content: parseContent(msg.content),
         user: 'bot'
     }
     store.dispatch(sendMessageAction(msgObj));
+}
+const parseContent = (text) => {
+    const pattern = /#{.{1,}}/;
+    text = text.replace('${','#{');
+    const match = text.match(pattern);
+    if (match) {
+        let answers = store.getState().botState.answers;
+        let variable = match[0].replace('#{','').replace('}','');
+        return text.replace(pattern,answers[variable]);
+    }
+    return text;
+
 }
 const isValid = ({
     content = ''
