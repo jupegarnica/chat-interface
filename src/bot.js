@@ -7,7 +7,6 @@ export const botState = {
     currentAnswer: {
         timestamp: 0
     },
-    byeText: 'bye',
     mode: 'ON'
 }
 export const botReducer = (state = botState, action) => {
@@ -18,7 +17,6 @@ export const botReducer = (state = botState, action) => {
         currentQuestion,
         currentAnswer,
         answers,
-        byeText
     } = state;
     switch (action.type) {
         case 'INIT_BOT':
@@ -28,7 +26,7 @@ export const botReducer = (state = botState, action) => {
                 index: 0,
                 currentQuestion: payload[index]
             };
-            break;
+            // break;
         case 'NEXT_QUESTION':
             index += 1;
             currentQuestion = questions[index]
@@ -37,7 +35,7 @@ export const botReducer = (state = botState, action) => {
                 index: index,
                 currentQuestion
             };
-            break;
+            // break;
         case 'PRINT_MESSAGE':
             const isNewAnswer = currentAnswer.timestamp < payload.timestamp && payload.user !== 'bot';
             return {
@@ -47,7 +45,7 @@ export const botReducer = (state = botState, action) => {
                     : currentAnswer,
                 isNewAnswer
             };
-            break;
+            // break;
         case 'NEW_VALID_ANSWER':
             const nameToSave = payload.currentQuestion.nameToSave || index;
             return {
@@ -62,13 +60,41 @@ export const botReducer = (state = botState, action) => {
                     ...state,
                     mode: 'OFF'
                 }
-            break;
+            // break;
         default:
             return {
                 ...state
             }
 
     }
+}
+const parseContent = (text) => {
+    const pattern = /#{.{1,}}/;
+    text = text.replace('${','#{');
+    const match = text.match(pattern);
+    if (match) {
+        let answers = store.getState().botState.answers;
+        let variable = match[0].replace('#{','').replace('}','');
+        return text.replace(pattern,answers[variable]);
+    }
+    return text;
+
+}
+const talk = (msg) => {
+    const msgObj = {
+        ...msg,
+        content: parseContent(msg.content),
+        user: 'bot'
+    }
+    store.dispatch(sendMessageAction(msgObj));
+}
+const isValid = ({
+    content = ''
+}, {
+    validatePattern = /./
+}) => {
+    let isValid = content.match(validatePattern);
+    return !!isValid;
 }
 export const OrchestratorDispacherMiddleWare = ({getState}) => (next) => (action) => {
     let returnValue = next(action)
@@ -117,35 +143,7 @@ export const OrchestratorDispacherMiddleWare = ({getState}) => (next) => (action
     }
     return returnValue
 }
-const talk = (msg) => {
 
-    const msgObj = {
-        ...msg,
-        content: parseContent(msg.content),
-        user: 'bot'
-    }
-    store.dispatch(sendMessageAction(msgObj));
-}
-const parseContent = (text) => {
-    const pattern = /#{.{1,}}/;
-    text = text.replace('${','#{');
-    const match = text.match(pattern);
-    if (match) {
-        let answers = store.getState().botState.answers;
-        let variable = match[0].replace('#{','').replace('}','');
-        return text.replace(pattern,answers[variable]);
-    }
-    return text;
-
-}
-const isValid = ({
-    content = ''
-}, {
-    validatePattern = /./
-}) => {
-    let isValid = content.match(validatePattern);
-    return !!isValid;
-}
 
 export default class Bot {
     constructor({

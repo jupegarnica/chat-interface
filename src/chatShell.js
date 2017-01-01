@@ -4,7 +4,7 @@ import Chat from './chat.js';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'; //material-ui dependency
 import {store,changeThemeAction,sendMessageAction} from './redux.js';
 import Bot from './bot';
-
+// eslint-disable-next-line
 const bot = new Bot({
     sendMessageFn: sendMessageAction,
     listenFromFn: store.subscribe,
@@ -18,8 +18,10 @@ const bot = new Bot({
         },
         {
             type: 'text',
+            // eslint-disable-next-line
             content: 'Hola ${name}, cual es tu email?',
             validatePattern: /.*@.*\./,
+            // eslint-disable-next-line
             invalidReply: 'no parece un email ${name}',
             nameToSave: 'email'
         }
