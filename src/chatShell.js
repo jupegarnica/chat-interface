@@ -2,28 +2,62 @@ import React, {Component} from 'react';
 import {Provider} from 'react-redux';
 import Chat from './chat.js';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'; //material-ui dependency
-import {store,changeThemeAction,sendMessageAction} from './redux.js';
+import {store,changeThemeAction} from './redux.js';
 import Bot from './bot';
 // eslint-disable-next-line
 const bot = new Bot({
-    sendMessageFn: sendMessageAction,
-    listenFromFn: store.subscribe,
     questions: [
         {
             type: 'text',
-            content: ' como te llamas?',
-            validatePattern: /^[A-Z]/,
-            invalidReply: '¿Sin mayuscula?, escríbelo bien please',
-            nameToSave: 'name'
+            contents: ['Woop, ¿Cómo te llamas?','¿Sin mayúscula?, escríbelo bien por favor, que cuesta poco.' ],
+            next: [{
+                matcher: /^[A-Z]/,
+                goToID: '', //default: go next
+            }],
+            id:'name',
+            input: {
+                type: 'text',
+                placeholder: 'Paco el de los palotes...', //suggestion
+            }
         },
         {
             type: 'text',
-            // eslint-disable-next-line
-            content: 'Hola ${name}, cual es tu email?',
-            validatePattern: /.*@.*\./,
-            // eslint-disable-next-line
-            invalidReply: 'no parece un email ${name}',
-            nameToSave: 'email'
+            contents: ['Hola #{name}, cual es tu email?', 'no parece un email ${name}'],
+            next: [{
+                matcher: /.*@.*\./,
+                goToID: '',
+            }],
+            id:'email'
+        },
+        {
+            type: 'text',
+            contents: ['Nombre: #{name}, email: #{email}  seguimos?'],
+            next: [
+                {
+                    matcher: /(si)|(ok)|(correcto)/i,
+                    goToID: ''
+                }, {
+                    matcher: /mal|no|cambiar|volver/i,
+                    goToID: 'name'
+                }
+            ],
+            id:'resumen'
+        },
+        {
+            type: 'text',
+            contents: [
+                `Adios
+                #{answers}
+
+
+                :D
+                `
+            ],
+            input: {
+                type: 'text',
+                placeholder: 'Adios', //suggestion
+            }
+                // no next, or no matcher
         }
     ]
 })

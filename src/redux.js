@@ -1,39 +1,28 @@
 import {createStore, applyMiddleware, combineReducers} from 'redux';
 import Logger from 'redux-logger';
-import {botState,botReducer, OrchestratorDispacherMiddleWare} from './bot';
+import {botState, botReducer, OrchestratorDispacherMiddleWare} from './bot';
 
 const initialmessagesHistory = [
-    // {
-    //     type: 'text',
-    //     content: 'hola',
-    //     user: 'me'
-    // }, {
-    //     type: 'text',
-    //     content: 'LoremLorem ipsum dolor sit amet, consectetur adipisicing elit, ',
-    //     user: 'john doe'
-    // }, {
-    //     type: 'text',
-    //     content: 'sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
-    //     user: 'me'
-    // }, {
-    //     type: 'text',
-    //     content: ':)',
-    //     user: 'john'
-    // }
 ];
-export const chatState = {
+const defaultInput = {
+    placeholder: 'Type here...',
+    type: 'text'
+};
+const validInputTypes = ['text'];
+export const uiState = {
     messagesHistory: initialmessagesHistory,
     theme: 'black',
     typing: {
         me: false
     },
-    chatInputText: 'type...',
+    input: defaultInput,
     isAutoScrolling: false,
-    isScrollAtBottom: true,
+    isScrollAtBottom: true
 }
 
+const isCorrectInput = (input = {}) => validInputTypes.some((t) => input.type === t);
 // Reducer:  Pure function and inmutable state aproach
-export function chatReducer(state = chatState, action) {
+export function uiReducer(state = uiState, action) {
     switch (action.type) {
         case 'PRINT_MESSAGE':
             return {
@@ -82,8 +71,23 @@ export function chatReducer(state = chatState, action) {
                 ...state,
                 isScrollAtBottom: action.payload
             }
+        case 'CHANGE_INPUT':
+             let input, _input;
+            if (typeof action.payload === 'object') {
+                input = action.payload.input;
+            }
+            if (input) {
+                let {type, placeholder} = input;
+                placeholder = placeholder || defaultInput.placeholder;
+                _input = isCorrectInput(input) ? {type, placeholder} : defaultInput;
+            }
+
+            return {
+                ...state,
+                input: _input || defaultInput
+            }
         default:
-            return state
+            return state;
     }
 }
 
@@ -105,8 +109,11 @@ const loggerOptions = {
     // diff = false: Boolean, // Show diff between states.
     // diffPredicate // Filter function for showing states diff.'
 }
-const reducers = combineReducers({botState:botReducer, chatState: chatReducer})
-export const store = createStore(reducers, {chatState,botState}, applyMiddleware(Logger(loggerOptions), OrchestratorDispacherMiddleWare))
+const reducers = combineReducers({botState: botReducer, uiState: uiReducer})
+export const store = createStore(reducers, {
+    uiState,
+    botState
+}, applyMiddleware(Logger(loggerOptions), OrchestratorDispacherMiddleWare))
 
 // Actions (logic)
 export const changeThemeAction = (theme) => {
@@ -139,12 +146,12 @@ export const stopTypingMeAction = () => {
 }
 
 export const sendMessageAction = ({type, content, user}) => {
-    let timestamp =  + new Date();
+    let timestamp = +new Date();
     const msg = {
         type,
         content,
         user,
-        timestamp,
+        timestamp
     }
     return {type: 'PRINT_MESSAGE', payload: msg};
 }
@@ -155,9 +162,8 @@ export const sendMessageFromChatInputAction = (domNode, defaultText, elementToHi
     setTimeout(() => elementToHide.classList.remove('goTransparent'), 1000)
     domNode.innerText = defaultText;
     store.dispatch(stopTypingMeAction());
-    return sendMessageAction({type:'text', content, user:'me'});
+    return sendMessageAction({type: 'text', content, user: 'me'});
 }
-
 
 const runAutoScrollDown = (domNode) => () => {
     domNode.scrollTop = domNode.scrollHeight;
@@ -191,7 +197,7 @@ export const isScrollAtBottom = (domNode) => {
 
 // Map Redux state to component props
 export const stateToProps = (state) => {
-    return {state: state.chatState}
+    return {state: state.uiState}
 }
 
 // Map Redux actions to component props

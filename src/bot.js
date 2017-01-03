@@ -2,80 +2,25 @@ import {store, sendMessageAction} from './redux';
 export const botState = {
     questions: [],
     answers: {},
-    index: 0,
+    index: -1,
     currentQuestion: {},
     currentAnswer: {
         timestamp: 0
     },
     mode: 'ON'
 }
-export const botReducer = (state = botState, action) => {
-    let {payload} = action;
-    let {
-        index,
-        questions,
-        currentQuestion,
-        currentAnswer,
-        answers,
-    } = state;
-    switch (action.type) {
-        case 'INIT_BOT':
-            return {
-                ...state,
-                questions: payload,
-                index: 0,
-                currentQuestion: payload[index]
-            };
-            // break;
-        case 'NEXT_QUESTION':
-            index += 1;
-            currentQuestion = questions[index]
-            return {
-                ...state,
-                index: index,
-                currentQuestion
-            };
-            // break;
-        case 'PRINT_MESSAGE':
-            const isNewAnswer = currentAnswer.timestamp < payload.timestamp && payload.user !== 'bot';
-            return {
-                ...state,
-                currentAnswer: isNewAnswer
-                    ? payload
-                    : currentAnswer,
-                isNewAnswer
-            };
-            // break;
-        case 'NEW_VALID_ANSWER':
-            const nameToSave = payload.currentQuestion.nameToSave || index;
-            return {
-                ...state,
-                answers: {
-                    ...answers,
-                    [nameToSave]: payload.currentAnswer.content,
-                }
-            }
-            case 'BOT_OFF':
-                return {
-                    ...state,
-                    mode: 'OFF'
-                }
-            // break;
-        default:
-            return {
-                ...state
-            }
 
-    }
-}
-const parseContent = (text) => {
-    const pattern = /#{.{1,}}/;
-    text = text.replace('${','#{');
-    const match = text.match(pattern);
-    if (match) {
+const parseVariables = (text = '') => {
+    const pattern = /#{\w{1,}}/g;
+    text = text.split('${').join('#{');
+    const matchs = text.match(pattern);
+    if (matchs) {
         let answers = store.getState().botState.answers;
-        let variable = match[0].replace('#{','').replace('}','');
-        return text.replace(pattern,answers[variable]);
+        matchs.forEach( m => {
+            let variable = m.replace('#{', '').replace('}', '');
+            let content = variable === 'answers' ? JSON.stringify(answers,null,2) : answers[variable]
+            text = text.replace(m, content);
+        })
     }
     return text;
 
@@ -83,54 +28,115 @@ const parseContent = (text) => {
 const talk = (msg) => {
     const msgObj = {
         ...msg,
-        content: parseContent(msg.content),
+        content: parseVariables(msg.content),
         user: 'bot'
     }
     store.dispatch(sendMessageAction(msgObj));
 }
-const isValid = ({
+const talkResults = (answers, question) => {
+    const msgObj = {
+        ...question,
+        content: JSON.stringify(answers, null, 2),
+        user: 'bot'
+    }
+    store.dispatch(sendMessageAction(msgObj));
+}
+
+const readQuestion = (q) => {
+    let {
+        contentsIndex = -1,
+        contents = [],
+        content
+    } = q;
+    if (contents.length) {
+        let i = ++contentsIndex % contents.length;
+        content = contents[i];
+    }
+    return {
+        ...q,
+        content,
+        contentsIndex
+    };
+}
+const getIndexById = (questions, id) => {
+    let r = questions.findIndex(q  => typeof id === 'string'
+        ? q.id === id
+        : false )
+    let r2 = r >= 0
+        ? r
+        : undefined;
+    return r2;
+}
+
+const isMatch = ({
     content = ''
 }, {
-    validatePattern = /./
+    next
 }) => {
-    let isValid = content.match(validatePattern);
-    return !!isValid;
+    if (!next) return true; // if no next match anyting.
+    for (var i = 0; i < next.length; i++) {
+        let match = content.match(next[i].matcher);
+        if (!!match) {
+            return next[i];
+        }
+    }
 }
+const whereToGo = (p) => {
+    p = typeof p === 'object'
+        ? p
+        : {}
+    return p.goToID;
+}
+
 export const OrchestratorDispacherMiddleWare = ({getState}) => (next) => (action) => {
-    let returnValue = next(action)
+    let returnValue = next(action);
     //after dispatch
     const {botState} = getState();
     let {currentQuestion, isNewAnswer, currentAnswer, mode, answers} = botState;
 
-    if (mode === 'OFF') return console.log(answers);
+    if (mode === 'OFF')
+        return console.info('no more questions');
 
     switch (action.type) {
         case 'INIT_BOT':
-            store.dispatch({type: 'ASK'});
+            store.dispatch({type: 'NEXT_QUESTION'});
             break;
         case 'ASK':
             talk(botState.currentQuestion);
             break;
         case 'PRINT_MESSAGE':
             if (isNewAnswer) {
-                if (isValid(currentAnswer, currentQuestion)) {
-                    store.dispatch({type: 'NEW_VALID_ANSWER', payload: {currentAnswer, currentQuestion}});
+                let pattern = isMatch(currentAnswer, currentQuestion);
+                if (pattern) {
+                    store.dispatch({
+                        type: 'VALID_ANSWER',
+                        payload: {
+                            currentAnswer,
+                            currentQuestion,
+                            pattern
+                        }
+                    });
                 } else {
-                    store.dispatch({type: 'INVALID_ANSWER', payload: currentAnswer});
+                    store.dispatch({
+                        type: 'INVALID_ANSWER',
+                        payload: {
+                            currentAnswer,
+                            currentQuestion
+                        }
+                    });
                 }
             }
             break;
-        case 'NEW_VALID_ANSWER':
-            store.dispatch({type: 'NEXT_QUESTION'});
+        case 'VALID_ANSWER':
+            let where = whereToGo(action.payload.pattern);
+            store.dispatch({type: 'NEXT_QUESTION', payload: where});
             break;
         case 'INVALID_ANSWER':
-            talk({
-                ...currentQuestion,
-                content: currentQuestion.invalidReply
-            });
+            store.dispatch({type: 'ASK'});
             break;
         case 'NEXT_QUESTION':
-            // if no more questions
+        setTimeout(()=> store.dispatch({type: 'CHANGE_INPUT', payload: currentQuestion}), 500);
+
             if (!currentQuestion) {
                 store.dispatch({type: 'BOT_OFF'});
             } else {
@@ -144,84 +150,94 @@ export const OrchestratorDispacherMiddleWare = ({getState}) => (next) => (action
     return returnValue
 }
 
+export const botReducer = (state = botState, action) => {
+    let {payload} = action;
+    let {index, questions, currentQuestion, currentAnswer, answers} = state;
+    switch (action.type) {
+        case 'INIT_BOT':
+            return {
+                ...state,
+                questions: payload,
+            };
+        case 'NEXT_QUESTION':
+            // if the payload matches any id go to that question else go next index
+            let _index = getIndexById(questions, payload);
+            _index = typeof _index === 'number'
+                ? _index
+                : ++index;
+            let o = {
+                ...state,
+                index: _index,
+                currentQuestion: questions[_index]
+            }
+            return o;
+            // break;
+        case 'PRINT_MESSAGE':
+            const isNewAnswer = currentAnswer.timestamp < payload.timestamp && payload.user !== 'bot';
+            return {
+                ...state,
+                currentAnswer: isNewAnswer
+                    ? payload
+                    : currentAnswer,
+                isNewAnswer
+            };
+            // break;
+        case 'VALID_ANSWER':
+            const id = payload.currentQuestion.id || index;
+            return {
+                ...state,
+                answers: {
+                    ...answers,
+                    [id]: payload.currentAnswer.content
+                }
+            }
+        case 'INVALID_ANSWER':
+            return {
+                ...state,
+                currentQuestion: readQuestion(payload.currentQuestion)
+            }
+        case 'BOT_OFF':
+            return {
+                ...state,
+                mode: 'OFF'
+            }
+            // break;
+        default:
+            return {
+                ...state
+            }
+
+    }
+}
 
 export default class Bot {
     constructor({
-        questions = [],
-        sendMessageFn,
-        listenFromFn
+        questions = []
     }) {
-        if (typeof sendMessageFn !== 'function') {
-            throw new Error('I need a talk function to work properly :(');
-        }
-        if (typeof listenFromFn !== 'function') {
-            throw new Error('I need a listen function to work properly :(');
-        }
-        store.dispatch({type: 'INIT_BOT', payload: questions})
-        // this.questions = questions;
-        // this.sendMessageFn = sendMessageFn;
-        // this.answers = {};
-        // listenFromFn(this.listen.bind(this));
+        let payload = questions.map(readQuestion);
+        store.dispatch({type: 'INIT_BOT', payload});
     }
-    // start() {
-    //     this.index = -1;
-    //     this.nextQuestion();
-    // }
-    // nextQuestion() {
-    //     this.index += 1;
-    //     this.currentQuestion = this.questions[this.index];
-    //     this.talk(this.currentQuestion);
-    // }
-    //
-    // talk(msg) {
-    //     const msgObj = typeof msg === 'string'
-    //         ? {
-    //             type: 'text',
-    //             content: msg,
-    //             user: 'bot'
-    //         }
-    //         : {
-    //             ...msg,
-    //             user: 'bot'
-    //         }
-    //     store.dispatch(this.sendMessageFn(msgObj));
-    // }
-    // listen() {
-    //     const messages = store.getState().chatState.messagesHistory;
-    //     const lastMessage = messages[messages.length - 1] || {
-    //         timestamp: 0
-    //     };
-    //     this.lastMessage = this.lastMessage || lastMessage;
-    //     const isNewMessage = this.lastMessage.timestamp < lastMessage.timestamp && lastMessage.user !== 'bot';
-    //     if (isNewMessage) {
-    //         this.lastMessage = {
-    //             ...lastMessage
-    //         };
-    //         // this.onNewReply()
-    //     }
-    // }
-    // onNewReply() {
-    //     if (this.validateAnswer(this.currentQuestion, this.lastMessage)) {
-    //         this.saveAnswer(this.lastMessage);
-    //         this.nextQuestion();
-    //     } else {
-    //         this.talkError();
-    //     }
-    // }
-    // saveAnswer(msg) {
-    //     this.answers[msg.nameToSave || this.index] = msg.content;
-    //     console.log('saveAnswer', this.answers);
-    // }
-    // validateAnswer({validatePattern = /./}, {content = ''}) {
-    //     let isValid = !!content.match(validatePattern);
-    //     console.log(isValid, validatePattern, content, content.search(validatePattern));
-    //
-    //     return isValid;
-    // }
-    // talkError() {
-    //     this.talk({
-    //         ...this.currentQuestion,
-    //         content: this.currentQuestion.noValidReply || 'try again'
-    //     })
-    // }
-}
+};
+// let questions = [
+//     {
+//         type: 'text',
+//         contents: ['Woop, ¿Cómo te llamas?','¿Sin mayúscula?, escríbelo bien por favor, que cuesta poco.' ],
+//         next: [{
+//             matcher: /^[A-Z]/,
+//             match: '',
+//             notMatch: ''
+//         }],
+//         id:'name'
+//     },
+//     {
+//         type: 'text',
+//         contents: ['Hola ${name}, cual es tu email?', 'no parece un email ${name}'],
+//         next: [{
+//             matcher: /^[A-Z]/,
+//             match: '',
+//             notMatch: ''
+//         }],
+//         id:'email'
+//     },
+//
+// ];

@@ -6,7 +6,7 @@ import ContentSend from 'material-ui/svg-icons/content/send';
 class ChatInputComp extends Component {
     sendMessageFromChatInputAction(e) {
         // e.preventDefault();
-        this.props.dispatch(sendMessageFromChatInputAction(this.textInputElement, this.props.state.chatInputText, this.chatInputElement));
+        this.props.dispatch(sendMessageFromChatInputAction(this.textInputElement, this.props.state.input.placeholder, this.chatInputElement));
     }
     onFocus() {
         if (!this.props.state.typing.me) {
@@ -25,7 +25,7 @@ class ChatInputComp extends Component {
             this.props.dispatch(startTypingMeAction(this.textInputElement));
         }
         if (e.key === 'Enter') {
-            this.props.dispatch(sendMessageFromChatInputAction(this.textInputElement, this.props.state.chatInputText, this.chatInputElement));
+            this.props.dispatch(sendMessageFromChatInputAction(this.textInputElement, this.props.state.input.placeholder, this.chatInputElement));
         }
     }
     render() {
@@ -33,7 +33,7 @@ class ChatInputComp extends Component {
             <div className={'chat-input '+( this.props.state.isScrollAtBottom ? '':'showShadow') } ref={(el) => this.chatInputElement = el} >
                 <div onClick={this.onFocus.bind(this)} className="text-input-wraper bubble thinking">
                     <div ref={(el) => this.textInputElement = el} suppressContentEditableWarning contentEditable onBlur={this.onBlur.bind(this)} onKeyDown={this.onKeyDown.bind(this)} className="text-input">
-                        {this.props.state.chatInputText}
+                        {this.props.state.input.placeholder}
                     </div>
 
                 </div>
