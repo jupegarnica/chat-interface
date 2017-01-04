@@ -8,7 +8,7 @@ const defaultInput = {
     placeholder: 'Type here...',
     type: 'text'
 };
-const validInputTypes = ['text'];
+const validInputTypes = ['text', 'select'];
 export const uiState = {
     messagesHistory: initialmessagesHistory,
     theme: 'black',
@@ -76,15 +76,9 @@ export function uiReducer(state = uiState, action) {
             if (typeof action.payload === 'object') {
                 input = action.payload.input;
             }
-            if (input) {
-                let {type, placeholder} = input;
-                placeholder = placeholder || defaultInput.placeholder;
-                _input = isCorrectInput(input) ? {type, placeholder} : defaultInput;
-            }
-
             return {
                 ...state,
-                input: _input || defaultInput
+                input: isCorrectInput(input) ? input : defaultInput
             }
         default:
             return state;
@@ -155,11 +149,11 @@ export const sendMessageAction = ({type, content, user}) => {
     }
     return {type: 'PRINT_MESSAGE', payload: msg};
 }
-export const sendMessageFromChatInputAction = (domNode, defaultText, elementToHide) => {
+export const sendMessageFromChatInputTextAction = (domNode, defaultText) => {
     // domNode.blur();
     const content = domNode.innerText;
-    elementToHide.classList.add('goTransparent');
-    setTimeout(() => elementToHide.classList.remove('goTransparent'), 1000)
+    document.body.classList.add('chat-input-goTransparent');
+    setTimeout(() => document.body.classList.remove('chat-input-goTransparent'), 1000)
     domNode.innerText = defaultText;
     store.dispatch(stopTypingMeAction());
     return sendMessageAction({type: 'text', content, user: 'me'});

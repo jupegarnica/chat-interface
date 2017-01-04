@@ -225,9 +225,9 @@
   box-shadow: rgba(0, 0, 0, 0.1) 0 -0.2em 0.1em 0em;
 }
 
-.chat-input.goTransparent {
-  transition: opacity 0.3s;
-  opacity: 0;
+.chat-input-goTransparent .chat-input {
+    transition: opacity 0.1s;
+    opacity: 0;
 }
 
 .text-input-wraper {
@@ -245,8 +245,11 @@
 }
 
 .text-input:focus, .text-input:focus * {
-  color: white !important;
-  outline: 0px !important;
+}
+.typing .text-input, .typing .text-input * {
+    color: white !important;
+    outline: 0px !important;
+
 }
 
 .text-input::selection, .text-input *::selection {
@@ -287,4 +290,9 @@
   100% {
     opacity: 1;
   }
+}
+
+
+.option-selected {
+    border: 1px white solid;
 }

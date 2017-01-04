@@ -1,12 +1,12 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
-import {stateToProps, dispatchProps, sendMessageFromChatInputAction, startTypingMeAction, stopTypingMeAction} from './redux';
+import {stateToProps, dispatchProps, sendMessageFromChatInputTextAction, startTypingMeAction, stopTypingMeAction} from './redux';
 import ContentSend from 'material-ui/svg-icons/content/send';
 
-class ChatInputComp extends Component {
-    sendMessageFromChatInputAction(e) {
+class ChatInputTextComp extends Component {
+    sendMessageFromChatInputTextAction(e) {
         // e.preventDefault();
-        this.props.dispatch(sendMessageFromChatInputAction(this.textInputElement, this.props.state.input.placeholder, this.chatInputElement));
+        this.props.dispatch(sendMessageFromChatInputTextAction(this.textInputElement, this.props.state.input.placeholder, this.ChatInputTextElement));
     }
     onFocus() {
         if (!this.props.state.typing.me) {
@@ -25,12 +25,12 @@ class ChatInputComp extends Component {
             this.props.dispatch(startTypingMeAction(this.textInputElement));
         }
         if (e.key === 'Enter') {
-            this.props.dispatch(sendMessageFromChatInputAction(this.textInputElement, this.props.state.input.placeholder, this.chatInputElement));
+            this.props.dispatch(sendMessageFromChatInputTextAction(this.textInputElement, this.props.state.input.placeholder, this.ChatInputTextElement));
         }
     }
     render() {
         return (
-            <div className={'chat-input '+( this.props.state.isScrollAtBottom ? '':'showShadow') } ref={(el) => this.chatInputElement = el} >
+            <div className={'chat-input '+( this.props.state.isScrollAtBottom ? '':'showShadow') + (this.props.state.typing.me ? 'typing': '') } ref={(el) => this.ChatInputTextElement = el} >
                 <div onClick={this.onFocus.bind(this)} className="text-input-wraper bubble thinking">
                     <div ref={(el) => this.textInputElement = el} suppressContentEditableWarning contentEditable onBlur={this.onBlur.bind(this)} onKeyDown={this.onKeyDown.bind(this)} className="text-input">
                         {this.props.state.input.placeholder}
@@ -38,11 +38,11 @@ class ChatInputComp extends Component {
 
                 </div>
                 <div hidden={!this.props.state.typing.me} className="sendIcon">
-                    <ContentSend onClick={this.sendMessageFromChatInputAction.bind(this)}/>
+                    <ContentSend onClick={this.sendMessageFromChatInputTextAction.bind(this)}/>
                 </div>
             </div>
         );
     }
 }
 // Connected Component
-export default connect(stateToProps, (dispatchProps))(ChatInputComp)
+export default connect(stateToProps, (dispatchProps))(ChatInputTextComp)

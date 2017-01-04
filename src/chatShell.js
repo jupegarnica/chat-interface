@@ -9,6 +9,19 @@ const bot = new Bot({
     questions: [
         {
             type: 'text',
+            contents: ['Me llamo Yosi, como estás?'],
+            next: [{
+                matcher: undefined, // match anything
+                goToID: '', //default: go next
+            }],
+            id:'estas', // save answer with this name
+            input: {
+                type: 'select',
+                options: ['bienbienbienbienbienbienbien', 'malmalmalmalmal']
+            }
+        },
+        {
+            type: 'text',
             contents: ['Woop, ¿Cómo te llamas?','¿Sin mayúscula?, escríbelo bien por favor, que cuesta poco.' ],
             next: [{
                 matcher: /^[A-Z]/,
@@ -22,11 +35,28 @@ const bot = new Bot({
         },
         {
             type: 'text',
+            contents: ['Me llamo Yosi, como estás?'],
+            next: [{
+                matcher: undefined, // match anything
+                goToID: '', //default: go next
+            }],
+            id:'estas', // save answer with this name
+            input: {
+                type: 'select',
+                options: ['bien', 'mal']
+            }
+        },
+        {
+            type: 'text',
             contents: ['Hola #{name}, cual es tu email?', 'no parece un email ${name}'],
             next: [{
                 matcher: /.*@.*\./,
                 goToID: '',
             }],
+            input: {
+                type: 'text',
+                placeholder: 'nombre@empresa.com', //suggestion
+            },
             id:'email'
         },
         {
@@ -41,7 +71,7 @@ const bot = new Bot({
                     goToID: 'name'
                 }
             ],
-            id:'resumen'
+            id:'resumenCheck'
         },
         {
             type: 'text',

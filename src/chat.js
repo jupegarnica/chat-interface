@@ -1,7 +1,8 @@
 import React, {Component} from 'react';
 import './chat.css';
 import ChatMessages from './chatMessages';
-import ChatInput from './chatInput';
+import ChatInputText from './chatInputText';
+import ChatInputSelect from './chatInputSelect';
 import {connect} from 'react-redux';
 import {stateToProps, dispatchToProps, windowResizeAction} from './redux';
 
@@ -23,10 +24,17 @@ class Chat extends Component{
         }
     }
     render() {
+        const {input} = this.props.state;
+        let chatInput;
+        if (input.type === 'select' && typeof input.options === 'object' && input.options.length) {
+            chatInput = (<ChatInputSelect/>)
+        } else {
+            chatInput = (<ChatInputText/>)
+        }
         return (
             <div className={'chat-wrapper ' + this.props.state.layout} ref={(el) => {this.chatElement = el;}}>
                 <ChatMessages />
-                <ChatInput/>
+                {chatInput}
             </div>
         )
 

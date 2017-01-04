@@ -16,9 +16,11 @@ const parseVariables = (text = '') => {
     const matchs = text.match(pattern);
     if (matchs) {
         let answers = store.getState().botState.answers;
-        matchs.forEach( m => {
+        matchs.forEach(m => {
             let variable = m.replace('#{', '').replace('}', '');
-            let content = variable === 'answers' ? JSON.stringify(answers,null,2) : answers[variable]
+            let content = variable === 'answers'
+                ? JSON.stringify(answers, null, 2)
+                : answers[variable]
             text = text.replace(m, content);
         })
     }
@@ -59,9 +61,9 @@ const readQuestion = (q) => {
     };
 }
 const getIndexById = (questions, id) => {
-    let r = questions.findIndex(q  => typeof id === 'string'
+    let r = questions.findIndex(q => typeof id === 'string'
         ? q.id === id
-        : false )
+        : false)
     let r2 = r >= 0
         ? r
         : undefined;
@@ -70,10 +72,9 @@ const getIndexById = (questions, id) => {
 
 const isMatch = ({
     content = ''
-}, {
-    next
-}) => {
-    if (!next) return true; // if no next match anyting.
+}, {next}) => {
+    if (!next)
+        return true; // if no next match anyting.
     for (var i = 0; i < next.length; i++) {
         let match = content.match(next[i].matcher);
         if (!!match) {
@@ -135,8 +136,8 @@ export const OrchestratorDispacherMiddleWare = ({getState}) => (next) => (action
             store.dispatch({type: 'ASK'});
             break;
         case 'NEXT_QUESTION':
-        setTimeout(()=> store.dispatch({type: 'CHANGE_INPUT', payload: currentQuestion}), 500);
-
+            // setTimeout(()=> store.dispatch({type: 'CHANGE_INPUT', payload: currentQuestion}), 500);
+            store.dispatch({type: 'CHANGE_INPUT', payload: currentQuestion});
             if (!currentQuestion) {
                 store.dispatch({type: 'BOT_OFF'});
             } else {
@@ -157,7 +158,7 @@ export const botReducer = (state = botState, action) => {
         case 'INIT_BOT':
             return {
                 ...state,
-                questions: payload,
+                questions: payload
             };
         case 'NEXT_QUESTION':
             // if the payload matches any id go to that question else go next index
