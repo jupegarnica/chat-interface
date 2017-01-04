@@ -9,36 +9,27 @@ const bot = new Bot({
     questions: [
         {
             type: 'text',
-            contents: ['Me llamo Yosi, como estás?'],
+            contents: ['Me llamo Yosi, encantado. Tú?','¿Sin mayúscula?, escríbelo bien por favor, que cuesta poco. :P' ],
             next: [{
-                matcher: undefined, // match anything
-                goToID: '', //default: go next
-            }],
-            id:'estas', // save answer with this name
-            input: {
-                type: 'select',
-                options: ['bienbienbienbienbienbienbien', 'malmalmalmalmal']
-            }
-        },
-        {
-            type: 'text',
-            contents: ['Woop, ¿Cómo te llamas?','¿Sin mayúscula?, escríbelo bien por favor, que cuesta poco.' ],
-            next: [{
-                matcher: /^[A-Z]/,
+                matcher: /^[A-Z]/, // valid if first Character es Upppercase
                 goToID: '', //default: go next
             }],
             id:'name',
             input: {
                 type: 'text',
-                placeholder: 'Paco el de los palotes...', //suggestion
+                placeholder: 'Pepe el de los palotes...', //suggestion
             }
         },
         {
             type: 'text',
-            contents: ['Me llamo Yosi, como estás?'],
+            contents: ['¿Cómo estás?'],
             next: [{
-                matcher: undefined, // match anything
-                goToID: '', //default: go next
+                matcher: /bien/,
+                goToID: 'bien', //default: go next
+            },
+            {
+                matcher: /mal/,
+                goToID: 'mal', //default: go next
             }],
             id:'estas', // save answer with this name
             input: {
@@ -48,7 +39,21 @@ const bot = new Bot({
         },
         {
             type: 'text',
-            contents: ['Hola #{name}, cual es tu email?', 'no parece un email ${name}'],
+            contents: ['Me alegro #{name}, ¿Qué puedo hacer por ti?'],
+            id:'bien', // save answer with this name
+            next: [{
+                matcher: /|/,
+                goToID: 'email',
+            }],
+        },
+        {
+            type: 'text',
+            contents: ['Siempre se puede mejorar :), ¿Qué puedo hacer por ti?'],
+            id:'mal', // save answer with this name
+        },
+        {
+            type: 'text',
+            contents: ['¿Cúal es tu email?', 'no parece un email ${name}'],
             next: [{
                 matcher: /.*@.*\./,
                 goToID: '',
@@ -61,7 +66,7 @@ const bot = new Bot({
         },
         {
             type: 'text',
-            contents: ['Nombre: #{name}, email: #{email}  seguimos?'],
+            contents: ['Nombre: #{name}, email: #{email}  correcto?'],
             next: [
                 {
                     matcher: /(si)|(ok)|(correcto)/i,
@@ -71,16 +76,46 @@ const bot = new Bot({
                     goToID: 'name'
                 }
             ],
+            input:{
+                placeholder:'si? no?',
+            },
             id:'resumenCheck'
         },
         {
             type: 'text',
             contents: [
-                `Adios
+                `Repetimos?
                 #{answers}
 
 
                 :D
+                `
+            ],
+            next: [
+                {
+                    matcher: /mal|no|cambiar|volver/i,
+                    goToID: 'name'
+                },
+                {
+                    matcher: /|/,
+                    goToID: ''
+                }
+            ],
+            input: {
+                type: 'text',
+                placeholder: 'Adios', //suggestion
+            }
+                // no next, or no matcher
+        }
+        ,
+        {
+            type: 'text',
+            contents: [
+                `
+                #{answers}
+
+
+                Gracias por su colaboración ;D
                 `
             ],
             input: {

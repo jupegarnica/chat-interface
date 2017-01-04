@@ -52,16 +52,14 @@ class ChatInputSelectComp extends Component {
         });
         return (
             <div className={'chat-input '+( this.props.state.isScrollAtBottom ? '':'showShadow') } ref={(el) => this.chatInput = el} >
-                <div onClick={this.onFocus.bind(this)} className="text-input-wraper ">
+                <div onClick={this.onFocus.bind(this)} className="options-wraper">
                     {_options}
                     {/* <div ref={(el) => this.textInputElement = el} suppressContentEditableWarning contentEditable onBlur={this.onBlur.bind(this)} onKeyDown={this.onKeyDown.bind(this)} className="text-input">
-
                     </div> */}
-
                 </div>
-                <div hidden={!this.props.state.typing.me} className="sendIcon">
+                {/* <div hidden={!this.props.state.typing.me} className="sendIcon">
                     <ContentSend onClick={this.sendMessageFromChatInputTextAction.bind(this)}/>
-                </div>
+                </div> */}
             </div>
         );
     }
