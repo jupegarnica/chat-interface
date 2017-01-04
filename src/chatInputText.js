@@ -4,26 +4,32 @@ import {stateToProps, dispatchProps, sendMessageFromChatInputTextAction, startTy
 import ContentSend from 'material-ui/svg-icons/content/send';
 
 class ChatInputTextComp extends Component {
+    constructor(){
+        super();
+        document.body.addEventListener('keydown', e => {
+            if (!this.props.state.typing.me) {
+                this.props.dispatch(startTypingMeAction(this.textInputElement, this.props.state));
+            }
+        });
+
+    }
     sendMessageFromChatInputTextAction(e) {
         // e.preventDefault();
         this.props.dispatch(sendMessageFromChatInputTextAction(this.textInputElement, this.props.state.input.placeholder, this.ChatInputTextElement));
     }
     onFocus() {
         if (!this.props.state.typing.me) {
-            this.props.dispatch(startTypingMeAction(this.textInputElement));
+            this.props.dispatch(startTypingMeAction(this.textInputElement, this.props.state));
         }
     }
     onBlur(){
         setTimeout(() => {
             if (this.props.state.typing.me) {
-                this.props.dispatch(stopTypingMeAction())
+                this.props.dispatch(stopTypingMeAction(this.textInputElement.innerText))
             }
         }, 100);
     }
     onKeyDown(e) {
-        if (!this.props.state.typing.me) {
-            this.props.dispatch(startTypingMeAction(this.textInputElement));
-        }
         if (e.key === 'Enter') {
             this.props.dispatch(sendMessageFromChatInputTextAction(this.textInputElement, this.props.state.input.placeholder, this.ChatInputTextElement));
         }

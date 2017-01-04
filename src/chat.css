@@ -1,6 +1,7 @@
 #chat-root {
   min-height: 100%;
   height: 100%;
+  padding-bottom: 11px;
   flex-direction: column;
   align-items: center;
   justify-content: flex-end;
@@ -46,7 +47,6 @@
   height: 100%;
   width: 100%;
   max-width: 40em;
-  padding-bottom: 1em;
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
@@ -109,7 +109,7 @@
   position: relative;
   background: rgba(0, 0, 0, 0.3);
   max-width: 100%;
-  margin: 0.5em;
+  margin: 0.2em;
   white-space: pre-wrap;
   overflow-wrap: break-word;
 }
@@ -170,8 +170,8 @@
 
 
 /* THINKING*/
-
-.thinking:after {
+.text-input-wraper.thinking:after ,
+.thinking:last-child:after {
   content: ' ';
   position: absolute;
   width: 10px;
@@ -184,8 +184,8 @@
   animation-name: thinking;
   animation-iteration-count: infinite;
 }
-
-.thinking:before {
+.text-input-wraper.thinking:before ,
+.thinking:last-child:before {
   content: ' ';
   position: absolute;
   width: 6px;
@@ -292,7 +292,18 @@
   }
 }
 
+/* INPUT SELECT */
 
+.options-wraper {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 1em;
+    max-width: 93%;
+    flex-direction: column;
+
+}
+.option-selected.thinking:after,
+.option-selected.thinking:before,
 .option-selected {
-    border: 1px white solid;
+    border: 0.1px rgba(255, 255, 255, 0.5) solid;
 }

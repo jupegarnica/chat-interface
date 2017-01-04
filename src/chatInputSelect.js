@@ -3,65 +3,88 @@ import {connect} from 'react-redux';
 import {stateToProps, dispatchProps, sendMessageFromChatInputTextAction, sendMessageAction} from './redux';
 import ContentSend from 'material-ui/svg-icons/content/send';
 
+let _this ;
 class ChatInputSelectComp extends Component {
-    constructor(){
+    constructor(props) {
         super();
         this.state = {
-            selected: -1
+            selected: -1,
+            option: '',
+            options: props.state.input.options
+        }
+        _this = this;
+    }
+    componentDidMount() {
+        document.body.addEventListener('keydown', this.listenOnKeyDown , false)
+    }
+    componentWillUnmount(){
+        document.body.removeEventListener('keydown', this.listenOnKeyDown , false)
+    }
+    listenOnKeyDown(e) {
+        e.preventDefault();
+        switch (e.key) {
+            case 'Enter':
+                if (_this.state.selected >= 0) {
+                    _this.props.dispatch(sendMessageFromChatInputSelectAction(_this.state.option))
+                }
+                break;
+            case 'ArrowUp':
+                {
+                    const {selected, options} = _this.state;
+                    const max = options.length - 1;
+                    const k = selected >= 0
+                        ? (selected < 1
+                            ? 0
+                            : selected - 1)
+                        : max;
+                    _this.setState({selected: k, option: options[k]});
+                }
+                break;
+            case 'ArrowDown':
+                {
+                    const {selected, options} = _this.state;
+                    const max = options.length - 1;
+                    const k = selected >= 0
+                        ? (selected >= max
+                            ? max
+                            : selected + 1)
+                        : 0;
+                    _this.setState({selected: k, option: options[k]});
+                }
+                break;
+            default:
+
         }
     }
-    sendMessageFromChatInputTextAction(e) {
-        // e.preventDefault();
-        // this.props.dispatch(sendMessageFromChatInputTextAction(this.textInputElement, this.props.state.input.placeholder, this.chatInput));
-    }
-    onFocus() {
-    //     if (!this.props.state.typing.me) {
-    //         this.props.dispatch(startTypingMeAction(this.textInputElement));
-    //     }
-    }
-    onBlur(){
-    //     setTimeout(() => {
-    //         if (this.props.state.typing.me) {
-    //             this.props.dispatch(stopTypingMeAction())
-    //         }
-    //     }, 100);
-    }
-    onKeyDown(e) {
-        // if (!this.props.state.typing.me) {
-        //     this.props.dispatch(startTypingMeAction(this.textInputElement));
-        // }
-        // if (e.key === 'Enter') {
-        //     this.props.dispatch(sendMessageFromChatInputTextAction(this.textInputElement, this.props.state.input.placeholder, this.chatInput));
-        // }
-    }
-    selectOption(i,o) {
-        this.setState({selected: i});
-        this.props.dispatch(sendMessageFromChatInputSelectAction(o))
+    selectOption(i, o) {
+        this.setState({selected: i, option: o});
+        setTimeout(()=> this.props.dispatch(sendMessageFromChatInputSelectAction(o)), 10)
     }
 
     render() {
-        let {options} = this.props.state.input
-
+        let {options} = this.state;
         let _options = options.map((o, i) => {
-            let isSelected = this.state.selected === i ? 'option-selected' : '';
+            let isSelected = this.state.selected === i
+                ? 'option-selected'
+                : '';
             return (
-                <div className={'bubble thinking ' + isSelected} key={i} onClick={this.selectOption.bind(this, i,o)}>
+                <div className={'bubble thinking ' + isSelected} key={i} onClick={this.selectOption.bind(this, i, o)}>
                     {o}
                 </div>
             )
         });
         return (
-            <div className={'chat-input '+( this.props.state.isScrollAtBottom ? '':'showShadow') } ref={(el) => this.chatInput = el} >
-                <div onClick={this.onFocus.bind(this)} className="text-input-wraper ">
+            <div className={'chat-input ' + (this.props.state.isScrollAtBottom
+                ? ''
+                : 'showShadow')} ref={(el) => this.chatInput = el}>
+                <div className="options-wraper">
                     {_options}
                     {/* <div ref={(el) => this.textInputElement = el} suppressContentEditableWarning contentEditable onBlur={this.onBlur.bind(this)} onKeyDown={this.onKeyDown.bind(this)} className="text-input">
-
                     </div> */}
-
                 </div>
-                <div hidden={!this.props.state.typing.me} className="sendIcon">
+                {/* <div hidden={!this.props.state.typing.me} className="sendIcon">
                     <ContentSend onClick={this.sendMessageFromChatInputTextAction.bind(this)}/>
-                </div>
+                </div> */}
             </div>
         );
     }

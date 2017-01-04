@@ -2,8 +2,7 @@ import {createStore, applyMiddleware, combineReducers} from 'redux';
 import Logger from 'redux-logger';
 import {botState, botReducer, OrchestratorDispacherMiddleWare} from './bot';
 
-const initialmessagesHistory = [
-];
+const initialmessagesHistory = [];
 const defaultInput = {
     placeholder: 'Type here...',
     type: 'text'
@@ -41,14 +40,16 @@ export function uiReducer(state = uiState, action) {
             return {
                 ...state,
                 typing: {
-                    me: true
+                    me: true,
+                    // focused: true
                 }
             }
         case 'STOP_TYPING_ME':
             return {
                 ...state,
                 typing: {
-                    me: false
+                    me: false,
+                    typed: action.payload
                 }
             }
         case 'START_AUTOSCROLL':
@@ -72,13 +73,16 @@ export function uiReducer(state = uiState, action) {
                 isScrollAtBottom: action.payload
             }
         case 'CHANGE_INPUT':
-             let input, _input;
+            let input,
+                _input;
             if (typeof action.payload === 'object') {
                 input = action.payload.input;
             }
             return {
                 ...state,
-                input: isCorrectInput(input) ? input : defaultInput
+                input: isCorrectInput(input)
+                    ? input
+                    : defaultInput
             }
         default:
             return state;
@@ -115,8 +119,8 @@ export const changeThemeAction = (theme) => {
     return {type: 'CHANGE_THEME', payload: theme};
 }
 
-export const startTypingMeAction = (domNode) => {
-    function selectElemText(elem) {
+export const startTypingMeAction = (domNode, state) => {
+    function selectElemText(elem, justFocus) {
         var range = document.createRange();
         range.selectNodeContents(elem);
         var selection = window.getSelection();
@@ -124,10 +128,17 @@ export const startTypingMeAction = (domNode) => {
         selection.addRange(range);
     };
     selectElemText(domNode);
+    // TODO Focus but do not auto select text when the typed is diferent from the placeholder
+    // if (state.input.placeholder === state.typing.typed) {
+    //     selectElemText(domNode);
+    // } else {
+    //     // console.log(domNode);
+    // }
+
     return {type: 'START_TYPING_ME'};
 }
 
-export const stopTypingMeAction = () => {
+export const stopTypingMeAction = (text) => {
     (function clearSelection() {
         if (document.selection) {
             document.selection.empty();
@@ -136,7 +147,7 @@ export const stopTypingMeAction = () => {
         }
     })();
     document.body.click();
-    return {type: 'STOP_TYPING_ME'};
+    return {type: 'STOP_TYPING_ME', payload: text};
 }
 
 export const sendMessageAction = ({type, content, user}) => {
