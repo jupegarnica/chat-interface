@@ -77,6 +77,33 @@ const bot = new Bot({
                     goToID: ''
                 }
             ],
+            next: [
+                {
+                    matcher: /mal|no|cambiar|volver/i,
+                    goToID: 'name'
+                },
+                {
+                    matcher: /|/,
+                    goToID: ''
+                }
+            ],
+            input: {
+                type: 'text',
+                placeholder: 'Adios', //suggestion
+            }
+                // no next, or no matcher
+        }
+        ,
+        {
+            type: 'text',
+            contents: [
+                `
+                #{answers}
+
+
+                Gracias por su colaboración ;D
+                `
+            ],
             input: {
                 type: 'text',
                 placeholder: 'si? no?', //suggestion
