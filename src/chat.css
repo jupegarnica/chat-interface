@@ -58,7 +58,11 @@
 }
 
 .chat-wrapper.landscape .chat-input {
-  width: 12em;
+    min-width: 12em;
+    max-width: 40%;
+}
+.landscape .chat-messages {
+    flex-grow: 1;
 }
 
 .paperTransparent {

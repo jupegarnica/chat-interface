@@ -188,9 +188,9 @@ export const stopAutoScrollAction = () => {
     return {type: 'STOP_AUTOSCROLL'};
 }
 export const windowResizeAction = (width, heigth) => {
-    const layout = width / heigth > 2
-        ? 'landscape'
-        : 'portrait'
+    const layout =  width > 850 || width  < (heigth + 50)
+        ? 'portrait'
+        : 'landscape'
     return {type: 'CHANGE_LAYOUT', payload: layout};
 }
 export const isScrollAtBottom = (domNode) => {

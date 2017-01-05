@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import {Provider} from 'react-redux';
 import Chat from './chat.js';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'; //material-ui dependency
-import {store, changeThemeAction} from './redux.js';
+import {store, changeThemeAction, windowResizeAction} from './redux.js';
 import Bot from './bot';
 // eslint-disable-next-line
 const bot = new Bot({
@@ -134,13 +134,28 @@ let theme = search && search.length
     : '';
 theme && store.dispatch(changeThemeAction(theme));
 
+const listenToResize = (e) => {
+    let action = windowResizeAction(document.body.offsetWidth, document.body.offsetHeight)
+    if (store.getState().layout !== action.payload) {
+        store.dispatch(action);
+    }
+};
 // React component
 class ChatShellComp extends Component {
+    componentDidMount() {
+        window.addEventListener('resize', listenToResize);
+        listenToResize();
+    }
+    componentWillUnmount(){
+        window.removeEventListener('resize', listenToResize );
+    }
     render() {
         return (
             <Provider store={store}>
                 <MuiThemeProvider>
-                    <Chat/>
+                    <Chat ref={(el) => {
+                        this.chatElement = el;
+                    }}/>
                 </MuiThemeProvider>
             </Provider>
         )

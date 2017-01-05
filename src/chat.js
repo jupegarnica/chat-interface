@@ -6,29 +6,7 @@ import ChatInputSelect from './chatInputSelect';
 import {connect} from 'react-redux';
 import {stateToProps, dispatchToProps, windowResizeAction} from './redux';
 
-const listenToResize = () => {
-    let action = windowResizeAction(_this.chatElement.offsetWidth, _this.chatElement.offsetHeight)
-    if (_this.props.state.layout !== action.payload) {
-        _this.props.dispatch(action);
-    }
-};
-let _this;
 class Chat extends Component {
-    constructor(props) {
-        super();
-        _this = this;
-
-    }
-    componentDidMount() {
-        document.body.addEventListener('resize', listenToResize );
-        let action = windowResizeAction(this.chatElement.offsetWidth, this.chatElement.offsetHeight)
-        if (this.props.state.layout !== action.payload) {
-            this.props.dispatch(action);
-        }
-    }
-    componentWillUnmount(){
-        document.body.removeEventListener('resize', listenToResize );
-    }
     render() {
         const {input} = this.props.state;
         let chatInput;
@@ -38,9 +16,7 @@ class Chat extends Component {
             chatInput = (<ChatInputText/>)
         }
         return (
-            <div className={'chat-wrapper ' + this.props.state.layout} ref={(el) => {
-                this.chatElement = el;
-            }}>
+            <div className={'chat-wrapper ' + this.props.state.layout}>
                 <ChatMessages/> {chatInput}
             </div>
         )
