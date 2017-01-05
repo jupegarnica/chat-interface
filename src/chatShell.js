@@ -22,7 +22,7 @@ const bot = new Bot({
             id: 'estas', // save answer with this name
             input: {
                 type: 'select',
-                options: ['bien', 'mal','bien', 'mal']
+                options: ['bien loren ipsmasd sdkljasdf dsa ', 'mal loren ipsmasd sdkljasdf dsa ','bien loren ipsmasd sdkljasdf dsa ', 'mal loren ipsmasd sdkljasdf dsa ','bien loren ipsmasd sdkljasdf dsa ', 'mal loren ipsmasd sdkljasdf dsa ','bien loren ipsmasd sdkljasdf dsa ', 'mal loren ipsmasd sdkljasdf dsa ']
             }
         }, {
             type: 'text',

@@ -19,27 +19,7 @@
   /*background: linear-gradient(to right bottom, #111, #222, #333, #444);*/
 }
 
-.image #chat-root {
-  background: url('https://images.unsplash.com/photo-1483086431886-3590a88317fe?dpr=1&auto=format&fit=crop&w=767&h=1149&q=80&cs=tinysrgb&crop=');
-}
-
-.yellow #chat-root {
-  background: linear-gradient(120deg, #ff8d00, #fcc000, hsl(46, 98%, 55%));
-  font-family: monospace;
-  ;
-}
-
-.blue #chat-root {
-  background: linear-gradient(to right bottom, rgb(47, 43, 173), rgb(47, 43, 173), rgb(65, 58, 228), rgb(102, 98, 255));
-  font-family: arial;
-}
-
-.green #chat-root {
-  background: linear-gradient(to left bottom, #016d63, #056f65, #02635a, #084a44);
-  font-family: cursive;
-}
-
-#chat-root * {
+#chat-root {
   color: white;
 }
 
@@ -58,11 +38,12 @@
 }
 
 .chat-wrapper.landscape .chat-input {
-    min-width: 12em;
-    max-width: 40%;
+  min-width: 12em;
+  max-width: 40%;
 }
+
 .landscape .chat-messages {
-    flex-grow: 1;
+  flex-grow: 1;
 }
 
 .paperTransparent {
@@ -174,8 +155,8 @@
 
 
 /* THINKING*/
-.text-input-wraper.thinking:after ,
-.thinking:last-child:after {
+
+.text-input-wraper.thinking:after, .thinking:last-child:after {
   content: ' ';
   position: absolute;
   width: 10px;
@@ -188,8 +169,8 @@
   animation-name: thinking;
   animation-iteration-count: infinite;
 }
-.text-input-wraper.thinking:before ,
-.thinking:last-child:before {
+
+.text-input-wraper.thinking:before, .thinking:last-child:before {
   content: ' ';
   position: absolute;
   width: 6px;
@@ -222,16 +203,20 @@
   flex-shrink: 0;
   opacity: 1;
   transition: opacity 2s;
-  /*box-shadow: rgba(0,0,0,0.1) 0 -0.2em 0.1em 0em*/
+  padding-top: 0.5em;
+  padding-right: 0.4em;
+  transition: box-shadow 0.2s linear;
+  overflow: auto;
 }
 
 .chat-input.showShadow {
-  box-shadow: rgba(0, 0, 0, 0.1) 0 -0.2em 0.1em 0em;
+  box-shadow: rgba(0, 0, 0, 0.1) -0.2em -1em 1.5em 0.3em;
+  transition: box-shadow 0.1s linear;
 }
 
 .chat-input-goTransparent .chat-input {
-    transition: opacity 0.1s;
-    opacity: 0;
+  transition: opacity 0.1s;
+  opacity: 0;
 }
 
 .text-input-wraper {
@@ -243,17 +228,14 @@
 }
 
 .text-input, .text-input * {
-  color: rgba(255, 255, 255, 0.2) !important;
+  color: rgba(255, 255, 255, 0.2);
   outline: 0px !important;
   overflow: scroll;
 }
 
-.text-input:focus, .text-input:focus * {
-}
 .typing .text-input, .typing .text-input * {
-    color: white !important;
-    outline: 0px !important;
-
+  color: white;
+  outline: 0px !important;
 }
 
 .text-input::selection, .text-input *::selection {
@@ -296,18 +278,81 @@
   }
 }
 
+
 /* INPUT SELECT */
 
 .options-wraper {
-    display: flex;
-    justify-content: center;
-    margin-bottom: 1em;
-    max-width: 93%;
-    flex-direction: column;
-
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1em;
+  max-width: 93%;
+  flex-direction: column;
 }
-.option-selected.thinking:after,
-.option-selected.thinking:before,
-.option-selected {
-    border: 0.1px rgba(255, 255, 255, 0.5) solid;
+
+.option-selected.thinking:after, .option-selected.thinking:before, .option-selected {
+  border: 0.1px rgba(255, 255, 255, 0.5) solid;
+}
+
+
+/*THEMES*/
+
+.image #chat-root {
+  background: url('https://images.unsplash.com/photo-1483086431886-3590a88317fe?dpr=1&auto=format&fit=crop&w=767&h=1149&q=80&cs=tinysrgb&crop=');
+}
+
+.yellow #chat-root {
+  background: linear-gradient(120deg, #ff8d00, #fcc000, hsl(46, 98%, 55%));
+  font-family: monospace;
+  ;
+}
+
+.blue #chat-root {
+  background: linear-gradient(to right bottom, rgb(47, 43, 173), rgb(47, 43, 173), rgb(65, 58, 228), rgb(102, 98, 255));
+  font-family: arial;
+}
+
+.green #chat-root {
+  background: linear-gradient(to left bottom, #016d63, #056f65, #02635a, #084a44);
+  font-family: Arial;
+}
+
+.white #chat-root {
+  background: linear-gradient(120deg, #bbb, #ddd, #ddd, #fff);
+  font-family: monospace;
+}
+
+.white .bubble {
+  background-color: #fff;
+}
+
+.white #chat-root {
+  color: black;
+}
+
+.white #chat-root *.thinking:before, .white #chat-root *.thinking:after {
+  background-color: white;
+}
+
+.white .you>div:before {
+  border-right-color: white;
+}
+
+.white .me>div:before {
+  border-left-color: white;
+}
+
+.white .text-input, .white .text-input * {
+  color: rgba(0, 0, 0, 0.4);
+  outline: 0px !important;
+  overflow: scroll;
+}
+
+.white .typing .text-input, .white .typing .text-input * {
+  color: black;
+  outline: 0px !important;
+}
+.white .option-selected.thinking:after,
+.white .option-selected.thinking:before,
+.white .option-selected {
+  border: 0.1px rgba(0, 0, 0, 0.5) solid;
 }
