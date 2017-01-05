@@ -11,14 +11,18 @@ class ChatMessagesComp extends Component {
                 this.props.dispatch(startAutoScrollAction(this.chatMessagesElement));
                 setTimeout(() => {
                     this.props.dispatch(stopAutoScrollAction());
-                },500)
+                }, 500)
             }
         });
     }
-    onUpdateText() {
+    onUpdateText(mean, std, {line, lineIdx, charIdx, defDelayGenerator}) {
         if (!this.props.state.isAutoScrolling) {
             this.props.dispatch(startAutoScrollAction(this.chatMessagesElement));
         }
+        if (charIdx >= 30) {
+            return 0;
+        }
+        return 200 / charIdx ;
     }
     onTypingDone() {
         if (this.props.state.isAutoScrolling) {

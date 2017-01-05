@@ -4,7 +4,7 @@ import ChatMessages from './chatMessages';
 import ChatInputText from './chatInputText';
 import ChatInputSelect from './chatInputSelect';
 import {connect} from 'react-redux';
-import {stateToProps, dispatchToProps, windowResizeAction} from './redux';
+import {stateToProps, dispatchToProps} from './redux';
 
 class Chat extends Component {
     render() {

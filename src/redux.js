@@ -115,7 +115,9 @@ export const store = createStore(reducers, {
 
 // Actions (logic)
 export const changeThemeAction = (theme) => {
-    document.body.classList.add(theme);
+    let classes = document.body.classList;
+    classes.remove('white');
+    classes.add(theme);
     return {type: 'CHANGE_THEME', payload: theme};
 }
 

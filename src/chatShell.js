@@ -9,23 +9,6 @@ const bot = new Bot({
     questions: [
         {
             type: 'text',
-            contents: ['¿Cómo estás?'],
-            next: [
-                {
-                    matcher: /bien/,
-                    goToID: 'bien', //default: go next
-                }, {
-                    matcher: /mal/,
-                    goToID: 'mal', //default: go next
-                }
-            ],
-            id: 'estas', // save answer with this name
-            input: {
-                type: 'select',
-                options: ['bien loren ipsmasd sdkljasdf dsa ', 'mal loren ipsmasd sdkljasdf dsa ','bien loren ipsmasd sdkljasdf dsa ', 'mal loren ipsmasd sdkljasdf dsa ','bien loren ipsmasd sdkljasdf dsa ', 'mal loren ipsmasd sdkljasdf dsa ','bien loren ipsmasd sdkljasdf dsa ', 'mal loren ipsmasd sdkljasdf dsa ']
-            }
-        }, {
-            type: 'text',
             contents: [
                 'Me llamo Yosi, encantado. Tú?', '¿Sin mayúscula?, escríbelo bien por favor, que cuesta poco. :P'
             ],
@@ -43,21 +26,11 @@ const bot = new Bot({
         }, {
             type: 'text',
             contents: ['Me alegro #{name}, ¿Qué puedo hacer por ti?'],
-            id: 'bien', // save answer with this name
-            next: [
-                {
-                    matcher: /|/,
-                    goToID: 'email'
-                }
-            ]
-        }, {
-            type: 'text',
-            contents: ['Siempre se puede mejorar :), ¿Qué puedo hacer por ti?'],
-            id: 'mal', // save answer with this name
-        }, {
+            id: 'hacer', // save answer with this name
+        },{
             type: 'text',
             contents: [
-                '¿Cúal es tu email?', 'no parece un email ${name}'
+                '¿Cúal es tu email?', 'no parece un email #{name}'
             ],
             next: [
                 {
@@ -83,7 +56,8 @@ const bot = new Bot({
                 }
             ],
             input: {
-                placeholder: 'si? no?'
+                type: 'select',
+                options: ['si','cambiar']
             },
             id: 'resumenCheck'
         }, {
@@ -96,7 +70,7 @@ const bot = new Bot({
                 `],
             next: [
                 {
-                    matcher: /mal|no|cambiar|volver/i,
+                    matcher: /si|cambiar|volver/i,
                     goToID: 'name'
                 }, {
                     matcher: /|/,
@@ -105,7 +79,7 @@ const bot = new Bot({
             ],
             input: {
                 type: 'text',
-                placeholder: 'Adios', //suggestion
+                placeholder: 'si? no?', //suggestion
             }
             // no next, or no matcher
         }, {
@@ -146,8 +120,8 @@ class ChatShellComp extends Component {
         window.addEventListener('resize', listenToResize);
         listenToResize();
     }
-    componentWillUnmount(){
-        window.removeEventListener('resize', listenToResize );
+    componentWillUnmount() {
+        window.removeEventListener('resize', listenToResize);
     }
     render() {
         return (

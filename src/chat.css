@@ -206,7 +206,9 @@
   padding-top: 0.5em;
   padding-right: 0.4em;
   transition: box-shadow 0.2s linear;
-  overflow: auto;
+}
+.landscape .chat-input {
+    overflow: auto;
 }
 
 .chat-input.showShadow {

@@ -1,7 +1,13 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
-import {stateToProps, dispatchProps, sendMessageFromChatInputTextAction, sendMessageAction} from './redux';
-import ContentSend from 'material-ui/svg-icons/content/send';
+import {stateToProps, dispatchProps, sendMessageAction} from './redux';
+
+const sendMessageFromChatInputSelectAction = (content) => {
+    // domNode.blur();
+    document.body.classList.add('chat-input-goTransparent');
+    setTimeout(() => document.body.classList.remove('chat-input-goTransparent'), 1000)
+    return sendMessageAction({type: 'text', content, user: 'me'});
+}
 
 let _this ;
 class ChatInputSelectComp extends Component {
@@ -79,22 +85,10 @@ class ChatInputSelectComp extends Component {
                 : 'showShadow')} ref={(el) => this.chatInput = el}>
                 <div className="options-wraper">
                     {_options}
-                    {/* <div ref={(el) => this.textInputElement = el} suppressContentEditableWarning contentEditable onBlur={this.onBlur.bind(this)} onKeyDown={this.onKeyDown.bind(this)} className="text-input">
-                    </div> */}
                 </div>
-                {/* <div hidden={!this.props.state.typing.me} className="sendIcon">
-                    <ContentSend onClick={this.sendMessageFromChatInputTextAction.bind(this)}/>
-                </div> */}
             </div>
         );
     }
 }
 // Connected Component
 export default connect(stateToProps, (dispatchProps))(ChatInputSelectComp)
-
-const sendMessageFromChatInputSelectAction = (content) => {
-    // domNode.blur();
-    document.body.classList.add('chat-input-goTransparent');
-    setTimeout(() => document.body.classList.remove('chat-input-goTransparent'), 1000)
-    return sendMessageAction({type: 'text', content, user: 'me'});
-}

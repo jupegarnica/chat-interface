@@ -35,14 +35,14 @@ const talk = (msg) => {
     }
     store.dispatch(sendMessageAction(msgObj));
 }
-const talkResults = (answers, question) => {
-    const msgObj = {
-        ...question,
-        content: JSON.stringify(answers, null, 2),
-        user: 'bot'
-    }
-    store.dispatch(sendMessageAction(msgObj));
-}
+// const talkResults = (answers, question) => {
+//     const msgObj = {
+//         ...question,
+//         content: JSON.stringify(answers, null, 2),
+//         user: 'bot'
+//     }
+//     store.dispatch(sendMessageAction(msgObj));
+// }
 
 const readQuestion = (q) => {
     let {
@@ -93,7 +93,7 @@ export const OrchestratorDispacherMiddleWare = ({getState}) => (next) => (action
     let returnValue = next(action);
     //after dispatch
     const {botState} = getState();
-    let {currentQuestion, isNewAnswer, currentAnswer, mode, answers} = botState;
+    let {currentQuestion, isNewAnswer, currentAnswer, mode} = botState;
 
     if (mode === 'OFF')
         return console.info('no more questions');
@@ -153,7 +153,7 @@ export const OrchestratorDispacherMiddleWare = ({getState}) => (next) => (action
 
 export const botReducer = (state = botState, action) => {
     let {payload} = action;
-    let {index, questions, currentQuestion, currentAnswer, answers} = state;
+    let {index, questions, currentAnswer, answers} = state;
     switch (action.type) {
         case 'INIT_BOT':
             return {

@@ -25,7 +25,7 @@ class ChatInputTextComp extends Component {
     onBlur(){
         setTimeout(() => {
             if (this.props.state.typing.me) {
-                this.props.dispatch(stopTypingMeAction(this.textInputElement.innerText))
+                this.props.dispatch(stopTypingMeAction(this.textInputElement || this.textInputElement.innerText))
             }
         }, 100);
     }
@@ -36,7 +36,7 @@ class ChatInputTextComp extends Component {
     }
     render() {
         return (
-            <div className={'chat-input '+( this.props.state.isScrollAtBottom ? '':'showShadow') + (this.props.state.typing.me ? 'typing': '') } ref={(el) => this.ChatInputTextElement = el} >
+            <div className={'chat-input '+( this.props.state.isScrollAtBottom ? '':'showShadow ') + (this.props.state.typing.me ? ' typing': '') } ref={(el) => this.ChatInputTextElement = el} >
                 <div onClick={this.onFocus.bind(this)} className="text-input-wraper bubble thinking">
                     <div ref={(el) => this.textInputElement = el} suppressContentEditableWarning contentEditable onBlur={this.onBlur.bind(this)} onKeyDown={this.onKeyDown.bind(this)} className="text-input">
                         {this.props.state.input.placeholder}
