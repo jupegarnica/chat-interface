@@ -6,122 +6,139 @@ import {store, changeThemeAction, windowResizeAction} from './redux.js';
 import Bot from './bot';
 // eslint-disable-next-line
 const bot = new Bot({
+    //     questions: [
+    //         {
+    //             type: 'text',
+    //             contents: [
+    //                 'Me llamo Yosi, encantado. Tú?', '¿Sin mayúscula?, escríbelo bien por favor, que cuesta poco. :P'
+    //             ],
+    //             next: [
+    //                 {
+    //                     matcher: /^[A-Z]/, // valid if first Character es Upppercase
+    //                     goToID: '', //default: go next
+    //                 }
+    //             ],
+    //             id: 'name',
+    //             input: {
+    //                 type: 'text',
+    //                 placeholder: 'Pepe el de los palotes...', //suggestion
+    //             }
+    //         }, {
+    //             type: 'text',
+    //             contents: ['Me alegro #{name}, ¿Qué puedo hacer por ti?'],
+    //             id: 'hacer', // save answer with this name
+    //         },{
+    //             type: 'text',
+    //             contents: [
+    //                 '¿Cúal es tu email?', 'no parece un email #{name}'
+    //             ],
+    //             next: [
+    //                 {
+    //                     matcher: /^.+@.+$/ // /.*@.*\./,
+    //                     goToID: ''
+    //                 }
+    //             ],
+    //             input: {
+    //                 type: 'text',
+    //                 placeholder: 'nombre@empresa.com', //suggestion
+    //             },
+    //             id: 'email'
+    //         }, {
+    //             type: 'text',
+    //             contents: ['Nombre: #{name}, email: #{email}  correcto?'],
+    //             next: [
+    //                 {
+    //                     matcher: /(si)|(ok)|(correcto)/i,
+    //                     goToID: ''
+    //                 }, {
+    //                     matcher: /mal|no|cambiar|volver/i,
+    //                     goToID: 'name'
+    //                 }
+    //             ],
+    //             input: {
+    //                 type: 'select',
+    //                 options: ['si','cambiar']
+    //             },
+    //             id: 'resumenCheck'
+    //         }, {
+    //             type: 'text',
+    //             contents: [`Repetimos?
+    //                 #{answers}
+    //
+    //
+    //                 :D
+    //                 `],
+    //             next: [
+    //                 {
+    //                     matcher: /si|cambiar|volver/i,
+    //                     goToID: 'name'
+    //                 }, {
+    //                     matcher: /|/,
+    //                     goToID: ''
+    //                 }
+    //             ],
+    //             next: [
+    //                 {
+    //                     matcher: /mal|no|cambiar|volver/i,
+    //                     goToID: 'name'
+    //                 },
+    //                 {
+    //                     matcher: /|/,
+    //                     goToID: ''
+    //                 }
+    //             ],
+    //             input: {
+    //                 type: 'text',
+    //                 placeholder: 'Adios', //suggestion
+    //             }
+    //                 // no next, or no matcher
+    //         }
+    //         ,
+    //         {
+    //             type: 'text',
+    //             contents: [
+    //                 `
+    //                 #{answers}
+    //
+    //
+    //                 Gracias por su colaboración ;D
+    //                 `
+    //             ],
+    //             input: {
+    //                 type: 'text',
+    //                 placeholder: 'si? no?', //suggestion
+    //             }
+    //             // no next, or no matcher
+    //         }, {
+    //             type: 'text',
+    //             contents: [`
+    //                 #{answers}
+    //
+    //
+    //                 Gracias por su colaboración ;D
+    //                 `],
+    //             input: {
+    //                 type: 'text',
+    //                 placeholder: 'Adios', //suggestion
+    //             }
+    //             // no next, or no matcher
+    //         }
+    //     ]
     questions: [
         {
-            type: 'text',
-            contents: [
-                'Me llamo Yosi, encantado. Tú?', '¿Sin mayúscula?, escríbelo bien por favor, que cuesta poco. :P'
-            ],
-            next: [
-                {
-                    matcher: /^[A-Z]/, // valid if first Character es Upppercase
-                    goToID: '', //default: go next
-                }
-            ],
-            id: 'name',
-            input: {
-                type: 'text',
-                placeholder: 'Pepe el de los palotes...', //suggestion
-            }
+            content: 'Me llamo Yosi, encantado. Tú?'
         }, {
-            type: 'text',
-            contents: ['Me alegro #{name}, ¿Qué puedo hacer por ti?'],
-            id: 'hacer', // save answer with this name
-        },{
-            type: 'text',
-            contents: [
-                '¿Cúal es tu email?', 'no parece un email #{name}'
-            ],
-            next: [
-                {
-                    matcher: /.*@.*\./,
-                    goToID: ''
-                }
-            ],
-            input: {
-                type: 'text',
-                placeholder: 'nombre@empresa.com', //suggestion
-            },
-            id: 'email'
-        }, {
-            type: 'text',
-            contents: ['Nombre: #{name}, email: #{email}  correcto?'],
-            next: [
-                {
-                    matcher: /(si)|(ok)|(correcto)/i,
-                    goToID: ''
-                }, {
-                    matcher: /mal|no|cambiar|volver/i,
-                    goToID: 'name'
-                }
-            ],
-            input: {
-                type: 'select',
-                options: ['si','cambiar']
-            },
-            id: 'resumenCheck'
-        }, {
-            type: 'text',
-            contents: [`Repetimos?
-                #{answers}
-
-
-                :D
-                `],
-            next: [
-                {
-                    matcher: /si|cambiar|volver/i,
-                    goToID: 'name'
-                }, {
-                    matcher: /|/,
-                    goToID: ''
-                }
-            ],
-            next: [
-                {
-                    matcher: /mal|no|cambiar|volver/i,
-                    goToID: 'name'
-                },
-                {
-                    matcher: /|/,
-                    goToID: ''
-                }
-            ],
-            input: {
-                type: 'text',
-                placeholder: 'Adios', //suggestion
-            }
-                // no next, or no matcher
-        }
-        ,
+            content: 'it will #{0}?'
+        },
         {
-            type: 'text',
-            contents: [
-                `
-                #{answers}
-
-
-                Gracias por su colaboración ;D
-                `
-            ],
-            input: {
-                type: 'text',
-                placeholder: 'si? no?', //suggestion
-            }
-            // no next, or no matcher
+            content: 'dijiste #{1}?'
         }, {
-            type: 'text',
-            contents: [`
-                #{answers}
-
-
-                Gracias por su colaboración ;D
-                `],
-            input: {
-                type: 'text',
-                placeholder: 'Adios', //suggestion
-            }
-            // no next, or no matcher
+            content: 'Adios #{2}?'
+        }
+        , {
+        }
+        , {
+            content: '#{answers}'
         }
     ]
 })

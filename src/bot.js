@@ -12,10 +12,12 @@ export const botState = {
 
 const parseVariables = (text = '') => {
     const pattern = /#{\w{1,}}/g;
+    text = text.split('$${').join('&&&{');
+    text = text.split('##{').join('&&&{');
     text = text.split('${').join('#{');
     const matchs = text.match(pattern);
     if (matchs) {
-        let answers = store.getState().botState.answers;
+        let answers = {juan: 'perez'};
         matchs.forEach(m => {
             let variable = m.replace('#{', '').replace('}', '');
             let content = variable === 'answers'
@@ -24,8 +26,7 @@ const parseVariables = (text = '') => {
             text = text.replace(m, content);
         })
     }
-    return text;
-
+    return text.split('&&&{').join('#{');
 }
 const talk = (msg) => {
     const msgObj = {

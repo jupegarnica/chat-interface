@@ -97,7 +97,7 @@
   margin: 0.2em;
   white-space: pre-wrap;
   overflow-wrap: break-word;
-  cursor: pointer;
+  /*cursor: pointer;*/
 }
 
 .you>div:before {
