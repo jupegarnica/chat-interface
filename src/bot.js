@@ -17,7 +17,7 @@ const parseVariables = (text = '') => {
     text = text.split('${').join('#{');
     const matchs = text.match(pattern);
     if (matchs) {
-        let answers = {juan: 'perez'};
+        let answers = store.getState().botState.answers;
         matchs.forEach(m => {
             let variable = m.replace('#{', '').replace('}', '');
             let content = variable === 'answers'

@@ -7,7 +7,7 @@ const defaultInput = {
     placeholder: 'Type here...',
     type: 'text'
 };
-const validInputTypes = ['text', 'select'];
+const validInputTypes = ['placeholder', 'options'];
 export const uiState = {
     messagesHistory: initialmessagesHistory,
     theme: 'black',
@@ -19,7 +19,7 @@ export const uiState = {
     isScrollAtBottom: true
 }
 
-const isCorrectInput = (input = {}) => validInputTypes.some((t) => input.type === t);
+const isCorrectInput = (input = {}) => validInputTypes.some((t) => input[t]);
 // Reducer:  Pure function and inmutable state aproach
 export function uiReducer(state = uiState, action) {
     switch (action.type) {

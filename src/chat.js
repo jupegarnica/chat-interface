@@ -10,7 +10,7 @@ class Chat extends Component {
     render() {
         const {input} = this.props.state;
         let chatInput;
-        if (input.type === 'select' && typeof input.options === 'object' && input.options.length) {
+        if ( typeof input.options === 'object' && input.options.length) {
             chatInput = (<ChatInputSelect/>)
         } else {
             chatInput = (<ChatInputText/>)

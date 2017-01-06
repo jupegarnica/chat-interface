@@ -22,6 +22,9 @@
 #chat-root {
   color: white;
 }
+#chat-root a{
+  color: inherit;;
+}
 
 .chat-wrapper {
   height: 100%;
